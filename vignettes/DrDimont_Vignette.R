@@ -61,9 +61,17 @@ metabolite_layer <- make_layer(name="metabolite",
 ## ----Make layers list---------------------------------------------------------
 all_layers <- list(mrna_layer, protein_layer, phosphosite_layer, metabolite_layer)
 
+## ----eval=FALSE---------------------------------------------------------------
+#  # (i) make inter-layer connection
+#  make_connection(from='mrna', to='protein', connect_on='gene_name', weight=1)
+
 ## -----------------------------------------------------------------------------
 # Data inspection
 metabolite_protein_interactions[1:3, ]
+
+## ----eval=FALSE---------------------------------------------------------------
+#  # (ii) make inter-layer connection
+#  make_connection(from='protein', to='metabolite', connect_on=metabolite_protein_interactions, weight='combined_score')
 
 ## ----Inter-layer connections--------------------------------------------------
 all_inter_layer_connections = list(
@@ -121,13 +129,13 @@ example_correlation_matrices <- compute_correlation_matrices(
 # Data inspection
 example_correlation_matrices$annotations$groupA$protein[1:3, ]
 
-## ----Individual Graphs, message=FALSE, results='hide'-------------------------
+## ----Individual graphs, message=FALSE, results='hide'-------------------------
 example_individual_graphs <- generate_individual_graphs(
                                         correlation_matrices=example_correlation_matrices, 
                                         layers=all_layers, 
                                         settings=example_settings)
 
-## ----Combine Graphs-----------------------------------------------------------
+## ----Combine graphs-----------------------------------------------------------
 example_combined_graphs <- generate_combined_graphs(
                                     graphs=example_individual_graphs[["graphs"]], 
                                     annotations=example_individual_graphs[["annotations"]], 
@@ -138,7 +146,7 @@ example_combined_graphs <- generate_combined_graphs(
 # Data inspection
 example_combined_graphs$annotations$both[1:3, ]
 
-## ----Drug Targets-------------------------------------------------------------
+## ----Drug targets and their edges---------------------------------------------
 example_drug_target_edges <- determine_drug_targets(
                                         graphs=example_combined_graphs[["graphs"]], 
                                         annotations=example_combined_graphs[["annotations"]], 
@@ -161,12 +169,13 @@ example_differential_graph <- generate_differential_score_graph(
 #                                           interaction_score_graphs=example_interaction_score_graphs, 
 #                                           settings=example_settings)
 
-## ----Drug response------------------------------------------------------------
-example_drug_response_scores <- compute_drug_response_scores(
-                                                     differential_graph=example_differential_graph,
-                                                     drug_targets=example_drug_target_edges[["targets"]],
-                                                     settings=example_settings)
+## ----Drug response, eval = FALSE----------------------------------------------
+#  example_drug_response_scores <- compute_drug_response_scores(
+#                                                       differential_graph=example_differential_graph,
+#                                                       drug_targets=example_drug_target_edges[["targets"]],
+#                                                       settings=example_settings)
 
 ## ----Result Output------------------------------------------------------------
-head(dplyr::filter(example_drug_response_scores, !is.na(drug_response_score)))
+data("drug_response_scores_example")
+head(dplyr::filter(drug_response_scores_example, !is.na(drug_response_score)))
 
