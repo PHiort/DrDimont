@@ -36,7 +36,7 @@ drdimont_settings <- function(
     #' Default parameters can be changed within the function call.
     #'
     #' @param correlation_method ["pearson"|"spearman"|"kendall"] Correlation method used
-    #' for graph generation. (default: spearman)
+    #' for graph generation. Argument is passed to \code{\link[WGCNA]{cor}}. (default: spearman)
     #' @param handling_missing_data ["all.obs"|"pairwise.complete.obs"] Specifying the handling
     #' of missing data during correlation matrix computation. Argument is passed to \code{\link[WGCNA]{cor}}.
     #' Can be a single character string if the same for all layers, else a named list mapping layer names

@@ -36,7 +36,7 @@ drdimont_settings(
 should be saved during \code{\link[DrDimont]{run_pipeline}}. (default: TRUE)}
 
 \item{correlation_method}{["pearson"|"spearman"|"kendall"] Correlation method used
-for graph generation. (default: spearman)}
+for graph generation. Argument is passed to \code{\link[WGCNA]{cor}}. (default: spearman)}
 
 \item{handling_missing_data}{["all.obs"|"pairwise.complete.obs"] Specifying the handling
 of missing data during correlation matrix computation. Argument is passed to \code{\link[WGCNA]{cor}}.

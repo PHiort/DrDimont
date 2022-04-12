@@ -205,7 +205,7 @@ run_pipeline <- function(layers, inter_layer_connections, drug_target_interactio
     #'                                     groupB=list(metabolite=0.1)),
     #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
     #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=TRUE,
+    #'                      save_intermediate_data=FALSE,
     #'                      python_executable="python")
     #'
     #' \dontrun{
@@ -309,7 +309,7 @@ compute_correlation_matrices <- function(layers, settings) {
     #'                                     groupB=list(metabolite=0.1)),
     #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
     #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=TRUE,
+    #'                      save_intermediate_data=FALSE,
     #'                      python_executable="python")
     #'
     #' correlation_matrices <- compute_correlation_matrices(layers_example, settings)
@@ -410,7 +410,7 @@ generate_individual_graphs <- function(correlation_matrices, layers, settings) {
     #'                                     groupB=list(metabolite=0.1)),
     #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
     #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=TRUE,
+    #'                      save_intermediate_data=FALSE,
     #'                      python_executable="python")
     #'
     #' individual_graphs <- generate_individual_graphs(correlation_matrices_example,
@@ -554,7 +554,7 @@ generate_combined_graphs <- function(graphs, annotations, inter_layer_connection
     #'                                     groupB=list(metabolite=0.1)),
     #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
     #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=TRUE,
+    #'                      save_intermediate_data=FALSE,
     #'                      python_executable="python")
     #'
     #' combined_graphs <- generate_combined_graphs(
@@ -721,7 +721,7 @@ determine_drug_targets <- function(graphs, annotations, drug_target_interactions
     #'                                     groupB=list(metabolite=0.1)),
     #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
     #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=TRUE,
+    #'                      save_intermediate_data=FALSE,
     #'                      python_executable="python")
     #'
     #' drug_target_interactions <- make_drug_target(target_molecules='protein',
@@ -817,7 +817,7 @@ generate_interaction_score_graphs <- function(graphs, drug_target_edgelists, set
     #'                                     groupB=list(metabolite=0.1)),
     #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
     #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=TRUE,
+    #'                      save_intermediate_data=FALSE,
     #'                      python_executable="python")
     #'
     #' \dontrun{
@@ -896,7 +896,7 @@ generate_differential_score_graph <- function(interaction_score_graphs, settings
     #'                                     groupB=list(metabolite=0.1)),
     #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
     #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=TRUE,
+    #'                      save_intermediate_data=FALSE,
     #'                      python_executable="python")
     #'
     #' differential_score_graph <- generate_differential_score_graph(
@@ -1019,14 +1019,18 @@ compute_drug_response_scores <- function(differential_graph, drug_targets, setti
     #'                                     groupB=list(metabolite=0.1)),
     #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
     #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=TRUE,
+    #'                      save_intermediate_data=FALSE,
     #'                      python_executable="python")
     #'
+    #' \dontrun{
     #' drug_response_scores <- compute_drug_response_scores(
     #'                                      differential_graph_example,
     #'                                      drug_target_edges_example$targets,
     #'                                      settings)
+    #' }
+    #' 
     #' @importFrom rlang .data
+    #' 
 
 
     ### mean drug response else median drug response
@@ -1076,7 +1080,7 @@ compute_drug_response_scores <- function(differential_graph, drug_targets, setti
         else if (!median_drug_response & !absolute_difference) { score <- mean(targets_edges$differential_interaction_score) }
 
         ### save the drug's response score in data frame
-        drug_response_scores["drug_response_score"][drug_response_scores["drug_name"] == drug] <- score
+        drug_response_scores["drug_response_score"][drug_response_scores["drug_name"] == drug] <- abs(score)
     }
 
     drug_response_scores <- drug_response_scores %>% dplyr::arrange(.data$drug_name)

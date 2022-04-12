@@ -43,7 +43,7 @@ settings <- drdimont_settings(
                                     groupB=list(metabolite=0.1)),
                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
                                      metabolite=seq(0.35, 0.65, 0.01)),
-                     save_intermediate_data=TRUE,
+                     save_intermediate_data=FALSE,
                      python_executable="python")
 
 correlation_matrices <- compute_correlation_matrices(layers_example, settings)
