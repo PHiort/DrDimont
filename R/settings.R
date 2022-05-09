@@ -1,7 +1,7 @@
 drdimont_settings <- function(
                         ### saving
                         saving_path = './',
-                        save_intermediate_data = TRUE,
+                        save_data = TRUE,
                         ### network generation
                         correlation_method = "spearman",
                         handling_missing_data = "all.obs",
@@ -108,7 +108,7 @@ drdimont_settings <- function(
     #' scores should be used for drug response computation (default: FALSE)
     #'
     #' @param saving_path [string] Path to save intermediate output of DrDimont's functions. Default is current working directory.
-    #' @param save_intermediate_data [bool] Specifying if intermediate data such as correlation_matrices, individual_graphs, etc.
+    #' @param save_data [bool] Specifying if intermediate data such as correlation_matrices, individual_graphs, etc.
     #' should be saved during \code{\link[DrDimont]{run_pipeline}}. (default: TRUE)
     #' @param ... Supply additional settings.
     #'

@@ -184,7 +184,7 @@ run_pipeline <- function(layers, inter_layer_connections, drug_target_interactio
     #' data(metabolite_protein_interactions)
     #' data(layers_example)
     #'
-    #' inter_layer_connections = list(make_connection(from='mrna', to='protein',
+    #' example_inter_layer_connections = list(make_connection(from='mrna', to='protein',
     #'                                                connect_on='gene_name', weight=1),
     #'                                make_connection(from='protein', to='phosphosite',
     #'                                                connect_on='gene_name', weight=1),
@@ -192,24 +192,26 @@ run_pipeline <- function(layers, inter_layer_connections, drug_target_interactio
     #'                                                connect_on=metabolite_protein_interactions,
     #'                                                weight='combined_score'))
     #'
-    #' drug_target_interactions <- make_drug_target(target_molecules='protein',
+    #' example_drug_target_interactions <- make_drug_target(target_molecules='protein',
     #'                                  interaction_table=drug_gene_interactions,
     #'                                  match_on='gene_name')
     #'
-    #' settings <- drdimont_settings(
-    #'                      handling_missing_data=list(
+    #' example_settings <- drdimont_settings(
+    #'                        handling_missing_data=list(
     #'                               default="pairwise.complete.obs",
     #'                               mrna="all.obs"),
-    #'                      reduction_method="pickHardThreshold",
-    #'                      r_squared=list(default=0.8, groupA=list(metabolite=0.45),
-    #'                                     groupB=list(metabolite=0.1)),
-    #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
-    #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=FALSE,
-    #'                      python_executable="python")
+    #'                        reduction_method="pickHardThreshold",
+    #'                        r_squared=list(default=0.65, metabolite=0.1),
+    #'                        cut_vector=list(default=seq(0.2, 0.65, 0.01)),
+    #'                        save_data=FALSE,
+    #'                        python_executable="python")
     #'
     #' \dontrun{
-    #' run_pipeline(layers_example, inter_layer_connections, drug_target_interactions, settings)
+    #' run_pipeline(
+    #'      layers=layers_example, 
+    #'      inter_layer_connections=example_inter_layer_connections, 
+    #'      drug_target_interactions=example_drug_target_interactions, 
+    #'      settings=example_settings)
     #' }
     #'
 
@@ -300,25 +302,24 @@ compute_correlation_matrices <- function(layers, settings) {
     #'
     #' data(layers_example)
     #'
-    #' settings <- drdimont_settings(
-    #'                      handling_missing_data=list(
+    #' example_settings <- drdimont_settings(
+    #'                        handling_missing_data=list(
     #'                               default="pairwise.complete.obs",
     #'                               mrna="all.obs"),
-    #'                      reduction_method="pickHardThreshold",
-    #'                      r_squared=list(default=0.8, groupA=list(metabolite=0.45),
-    #'                                     groupB=list(metabolite=0.1)),
-    #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
-    #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=FALSE,
-    #'                      python_executable="python")
-    #'
-    #' correlation_matrices <- compute_correlation_matrices(layers_example, settings)
+    #'                        reduction_method="pickHardThreshold",
+    #'                        save_data=FALSE,
+    #'                        python_executable="python")
+    #' \dontrun{
+    #' correlation_matrices <- compute_correlation_matrices(
+    #'                              layers=layers_example, 
+    #'                              settings=example_settings)
+    #' }
     #'
 
-    ### empty list to store correlation matices of individual layers
+    ### empty list to store correlation matrices of individual layers
     adjacency_matrices <- list()
 
-    ### empty list to store annotation dataframes
+    ### empty list to store annotation data frames
     layer_annotations <- list()
 
     ### iterate over layers
@@ -361,7 +362,7 @@ compute_correlation_matrices <- function(layers, settings) {
     correlation_matrices <- list(correlation_matrices=adjacency_matrices, annotations=layer_annotations)
 
     ### save correlation matrices as RData file if choosen
-    if (settings$save_intermediate_data){
+    if (settings$save_data){
         message(format(Sys.time(), "[%y-%m-%d %X] "), "Saving correlation matrices...")
         save(correlation_matrices, file=paste0(settings$saving_path, "/correlation_matrices.rda"))
         message(format(Sys.time(), "[%y-%m-%d %X] "), "done.\n")
@@ -401,20 +402,20 @@ generate_individual_graphs <- function(correlation_matrices, layers, settings) {
     #' data(layers_example)
     #' data(correlation_matrices_example)
     #'
-    #' settings <- drdimont_settings(
-    #'                      handling_missing_data=list(
+    #' example_settings <- drdimont_settings(
+    #'                        handling_missing_data=list(
     #'                               default="pairwise.complete.obs",
     #'                               mrna="all.obs"),
-    #'                      reduction_method="pickHardThreshold",
-    #'                      r_squared=list(default=0.8, groupA=list(metabolite=0.45),
-    #'                                     groupB=list(metabolite=0.1)),
-    #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
-    #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=FALSE,
-    #'                      python_executable="python")
+    #'                        reduction_method="pickHardThreshold",
+    #'                        r_squared=list(default=0.65, metabolite=0.1),
+    #'                        cut_vector=list(default=seq(0.2, 0.5, 0.01)),
+    #'                        save_data=FALSE,
+    #'                        python_executable="python")
     #'
-    #' individual_graphs <- generate_individual_graphs(correlation_matrices_example,
-    #'                                                 layers_example, settings)
+    #' individual_graphs <- generate_individual_graphs(
+    #'                              correlation_matrices=correlation_matrices_example,
+    #'                              layers=layers_example, 
+    #'                              settings=example_settings)
     #'
     #' graph_metrics(individual_graphs$graphs$groupA$mrna)
     #' graph_metrics(individual_graphs$graphs$groupB$mrna)
@@ -496,7 +497,7 @@ generate_individual_graphs <- function(correlation_matrices, layers, settings) {
     individual_graphs <- list(graphs=graphs, annotations=correlation_matrices[['annotations']])
 
     ### save individual graphs as RData file if chosen
-    if (settings$save_intermediate_data) {
+    if (settings$save_data) {
         message(format(Sys.time(), "[%y-%m-%d %X] "), "Saving individual graphs...")
         save(individual_graphs, file=paste0(settings$saving_path, "/individual_graphs.rda"))
         message(format(Sys.time(), "[%y-%m-%d %X] "), "done.\n")
@@ -537,7 +538,7 @@ generate_combined_graphs <- function(graphs, annotations, inter_layer_connection
     #' data(individual_graphs_example)
     #' data(metabolite_protein_interactions)
     #'
-    #' inter_layer_connections = list(make_connection(from='mrna', to='protein',
+    #' example_inter_layer_connections = list(make_connection(from='mrna', to='protein',
     #'                                                connect_on='gene_name', weight=1),
     #'                                make_connection(from='protein', to='phosphosite',
     #'                                                connect_on='gene_name', weight=1),
@@ -545,23 +546,15 @@ generate_combined_graphs <- function(graphs, annotations, inter_layer_connection
     #'                                                connect_on=metabolite_protein_interactions,
     #'                                                weight='combined_score'))
     #'
-    #' settings <- drdimont_settings(
-    #'                      handling_missing_data=list(
-    #'                               default="pairwise.complete.obs",
-    #'                               mrna="all.obs"),
-    #'                      reduction_method="pickHardThreshold",
-    #'                      r_squared=list(default=0.8, groupA=list(metabolite=0.45),
-    #'                                     groupB=list(metabolite=0.1)),
-    #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
-    #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=FALSE,
-    #'                      python_executable="python")
+    #' example_settings <- drdimont_settings(
+    #'                        save_data=FALSE,
+    #'                        python_executable="python")
     #'
     #' combined_graphs <- generate_combined_graphs(
-    #'                                          individual_graphs_example$graphs,
-    #'                                          individual_graphs_example$annotations,
-    #'                                          inter_layer_connections,
-    #'                                          settings)
+    #'                            graphs=individual_graphs_example$graphs,
+    #'                            annotations=individual_graphs_example$annotations,
+    #'                            inter_layer_connections=example_inter_layer_connections,
+    #'                            settings=example_settings)
     #'
 
     inter_layer_edges <- list()
@@ -672,7 +665,7 @@ generate_combined_graphs <- function(graphs, annotations, inter_layer_connection
     combined_graphs <- list(graphs = graphs_combined, annotations = annotations_combined)
 
     ### save combined graphs as RData file if choosen
-    if (settings$save_intermediate_data){
+    if (settings$save_data){
         message(format(Sys.time(), "[%y-%m-%d %X] "), "Saving combined graphs...")
         save(combined_graphs, file=paste0(settings$saving_path, "/combined_graphs.rda"))
         message(format(Sys.time(), "[%y-%m-%d %X] "), "done.\n")
@@ -712,26 +705,19 @@ determine_drug_targets <- function(graphs, annotations, drug_target_interactions
     #' data(drug_gene_interactions)
     #' data(combined_graphs_example)
     #'
-    #' settings <- drdimont_settings(
-    #'                      handling_missing_data=list(
-    #'                               default="pairwise.complete.obs",
-    #'                               mrna="all.obs"),
-    #'                      reduction_method="pickHardThreshold",
-    #'                      r_squared=list(default=0.8, groupA=list(metabolite=0.45),
-    #'                                     groupB=list(metabolite=0.1)),
-    #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
-    #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=FALSE,
-    #'                      python_executable="python")
+    #' example_settings <- drdimont_settings(
+    #'                        save_data=FALSE,
+    #'                        python_executable="python")
     #'
-    #' drug_target_interactions <- make_drug_target(target_molecules='protein',
+    #' example_drug_target_interactions <- make_drug_target(target_molecules='protein',
     #'                                             interaction_table=drug_gene_interactions,
     #'                                             match_on='gene_name')
     #'
-    #' drug_target_edges <- determine_drug_targets(combined_graphs_example$graphs,
-    #'                                        combined_graphs_example$annotations,
-    #'                                        drug_target_interactions,
-    #'                                        settings)
+    #' drug_target_edges <- determine_drug_targets(
+    #'                            graphs=combined_graphs_example$graphs,
+    #'                            annotations=combined_graphs_example$annotations,
+    #'                            drug_target_interactions=example_drug_target_interactions,
+    #'                            settings=example_settings)
     #'
 
     drug_target_edge_list <- list()
@@ -763,7 +749,7 @@ determine_drug_targets <- function(graphs, annotations, drug_target_interactions
     message(format(Sys.time(), "[%y-%m-%d %X] "), "done.\n")
 
     ### save drug targets as RData file if choosen
-    if (settings$save_intermediate_data) {
+    if (settings$save_data) {
         message(format(Sys.time(), "[%y-%m-%d %X] "), "Saving drug targets...")
         save(drug_target_edges, file=paste0(settings$saving_path, "/drug_target_edges.rda"))
         message(format(Sys.time(), "[%y-%m-%d %X] "), "done.\n")
@@ -808,23 +794,15 @@ generate_interaction_score_graphs <- function(graphs, drug_target_edgelists, set
     #' data(combined_graphs_example)
     #' data(drug_target_edges_example)
     #'
-    #' settings <- drdimont_settings(
-    #'                      handling_missing_data=list(
-    #'                               default="pairwise.complete.obs",
-    #'                               mrna="all.obs"),
-    #'                      reduction_method="pickHardThreshold",
-    #'                      r_squared=list(default=0.8, groupA=list(metabolite=0.45),
-    #'                                     groupB=list(metabolite=0.1)),
-    #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
-    #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=FALSE,
-    #'                      python_executable="python")
+    #' example_settings <- drdimont_settings(
+    #'                        save_data=FALSE,
+    #'                        python_executable="python")
     #'
     #' \dontrun{
     #' interaction_score_graphs <- generate_interaction_score_graphs(
-    #'                                          combined_graphs_example$graphs,
-    #'                                          drug_target_edges_example$edgelists,
-    #'                                          settings)
+    #'                                          graphs=combined_graphs_example$graphs,
+    #'                                          drug_target_edgelists=drug_target_edges_example$edgelists,
+    #'                                          settings=example_settings)
     #' }
     #'
 
@@ -852,7 +830,7 @@ generate_interaction_score_graphs <- function(graphs, drug_target_edgelists, set
         message(format(Sys.time(), "[%y-%m-%d %X] "), "done.\n")
 
         ### save interaction score graphs as RData file if choosen
-        if (settings$save_intermediate_data) {
+        if (settings$save_data) {
             message(format(Sys.time(), "[%y-%m-%d %X] "), "Saving interaction score graphs...")
             save(interaction_score_graphs, file=paste0(settings$saving_path, "/interaction_score_graphs.rda"))
             message(format(Sys.time(), "[%y-%m-%d %X] "), "done.\n")
@@ -887,21 +865,13 @@ generate_differential_score_graph <- function(interaction_score_graphs, settings
     #' @examples
     #' data(interaction_score_graphs_example)
     #'
-    #' settings <- drdimont_settings(
-    #'                      handling_missing_data=list(
-    #'                               default="pairwise.complete.obs",
-    #'                               mrna="all.obs"),
-    #'                      reduction_method="pickHardThreshold",
-    #'                      r_squared=list(default=0.8, groupA=list(metabolite=0.45),
-    #'                                     groupB=list(metabolite=0.1)),
-    #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
-    #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=FALSE,
-    #'                      python_executable="python")
+    #' example_settings <- drdimont_settings(
+    #'                        save_data=FALSE,
+    #'                        python_executable="python")
     #'
     #' differential_score_graph <- generate_differential_score_graph(
-    #'                                          interaction_score_graphs_example,
-    #'                                          settings)
+    #'                                   interaction_score_graphs=interaction_score_graphs_example,
+    #'                                   settings=example_settings)
     #'
     #' @importFrom rlang .data
     #' 
@@ -923,7 +893,7 @@ generate_differential_score_graph <- function(interaction_score_graphs, settings
 
         differential_score_graph <- joined_graph
         ### save differential score graphs as RData file if choosen
-        if (settings$save_intermediate_data) {
+        if (settings$save_data) {
             message(format(Sys.time(), "[%y-%m-%d %X] "), "Saving differential score graphs...")
             save(differential_score_graph, file=paste0(settings$saving_path, "/differential_score_graph.rda"))
             message(format(Sys.time(), "[%y-%m-%d %X] "), "done.\n")
@@ -940,7 +910,7 @@ generate_differential_score_graph <- function(interaction_score_graphs, settings
     joined_df[['interactionweight_1']] <- joined_df[['interactionweight_1']] %>% dplyr::na_if(Inf) %>% tidyr::replace_na(replace = 0)
     joined_df[['interactionweight_2']] <- joined_df[['interactionweight_2']] %>% dplyr::na_if(Inf) %>% tidyr::replace_na(replace = 0)
 
-    ### TODO
+    ###
     reduced_joined_df <- joined_df %>% dplyr::filter(is.finite(!!dplyr::sym('weight_1')) & is.finite(!!dplyr::sym('weight_2')))
 
     ### calculate absolute differences
@@ -971,7 +941,7 @@ generate_differential_score_graph <- function(interaction_score_graphs, settings
 
     differential_score_graph <- joined_graph
     ### save differential score graphs as RData file if choosen
-    if (settings$save_intermediate_data) {
+    if (settings$save_data) {
         message(format(Sys.time(), "[%y-%m-%d %X] "), "Saving differential score graphs...")
         save(differential_score_graph, file=paste0(settings$saving_path, "/differential_score_graph.rda"))
         message(format(Sys.time(), "[%y-%m-%d %X] "), "done.\n")
@@ -1010,24 +980,14 @@ compute_drug_response_scores <- function(differential_graph, drug_targets, setti
     #' data(drug_target_edges_example)
     #' data(differential_graph_example)
     #'
-    #' settings <- drdimont_settings(
-    #'                      handling_missing_data=list(
-    #'                               default="pairwise.complete.obs",
-    #'                               mrna="all.obs"),
-    #'                      reduction_method="pickHardThreshold",
-    #'                      r_squared=list(default=0.8, groupA=list(metabolite=0.45),
-    #'                                     groupB=list(metabolite=0.1)),
-    #'                      cut_vector=list(default=seq(0.3, 0.7, 0.01),
-    #'                                      metabolite=seq(0.35, 0.65, 0.01)),
-    #'                      save_intermediate_data=FALSE,
-    #'                      python_executable="python")
+    #' example_settings <- drdimont_settings(
+    #'                        save_data=FALSE,
+    #'                        python_executable="python")
     #'
-    #' \dontrun{
     #' drug_response_scores <- compute_drug_response_scores(
-    #'                                      differential_graph_example,
-    #'                                      drug_target_edges_example$targets,
-    #'                                      settings)
-    #' }
+    #'                                differential_graph=differential_graph_example,
+    #'                                drug_targets=drug_target_edges_example$targets,
+    #'                                settings=example_settings)
     #' 
     #' @importFrom rlang .data
     #' 
@@ -1087,10 +1047,12 @@ compute_drug_response_scores <- function(differential_graph, drug_targets, setti
 
     message(format(Sys.time(), "[%y-%m-%d %X] "), "done.\n")
 
-    ### save drug response score in csv-file
-    message(format(Sys.time(), "[%y-%m-%d %X] "), "Writing drug response scores to csv file...")
-    utils::write.table(drug_response_scores, paste0(settings$saving_path, "/drug_response_scores.tsv"), sep='\t', row.names=FALSE, quote = FALSE)
-    message(format(Sys.time(), "[%y-%m-%d %X] "), "done.\n")
+    if (settings$save_data) {
+        ### save drug response score in csv-file
+        message(format(Sys.time(), "[%y-%m-%d %X] "), "Writing drug response scores to csv file...")
+        utils::write.table(drug_response_scores, paste0(settings$saving_path, "/drug_response_scores.tsv"), sep='\t', row.names=FALSE, quote = FALSE)
+        message(format(Sys.time(), "[%y-%m-%d %X] "), "done.\n")
+    }
 
     return(drug_response_scores)
 }

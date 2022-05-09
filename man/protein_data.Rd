@@ -22,7 +22,7 @@ protein_data
 \description{
 Protein analysis of breast cancer patients data from Krug et al. (2020) (data from the Clinical
 Proteomic Tumor Analysis Consortium (CPTAC)). The data is stratified by estrogen receptor (ER)
-expression status (`groupA` = ER+, `groupB` = ER-). The data was reduced to 120 genes.
+expression status (`groupA` = ER+, `groupB` = ER-). The data was reduced to 50 genes.
 For each group a data frame is given containing the raw data with the proteins as rows and the
 samples as columns. The first two columns contain the protein identifiers
 (ref_seq and gene_name).

@@ -44,23 +44,15 @@ python). You can use the `python_executable` setting to specify the command or p
 data(combined_graphs_example)
 data(drug_target_edges_example)
 
-settings <- drdimont_settings(
-                     handling_missing_data=list(
-                              default="pairwise.complete.obs",
-                              mrna="all.obs"),
-                     reduction_method="pickHardThreshold",
-                     r_squared=list(default=0.8, groupA=list(metabolite=0.45),
-                                    groupB=list(metabolite=0.1)),
-                     cut_vector=list(default=seq(0.3, 0.7, 0.01),
-                                     metabolite=seq(0.35, 0.65, 0.01)),
-                     save_intermediate_data=FALSE,
-                     python_executable="python")
+example_settings <- drdimont_settings(
+                       save_data=FALSE,
+                       python_executable="python")
 
 \dontrun{
 interaction_score_graphs <- generate_interaction_score_graphs(
-                                         combined_graphs_example$graphs,
-                                         drug_target_edges_example$edgelists,
-                                         settings)
+                                         graphs=combined_graphs_example$graphs,
+                                         drug_target_edgelists=drug_target_edges_example$edgelists,
+                                         settings=example_settings)
 }
 
 }

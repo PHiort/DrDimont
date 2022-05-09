@@ -292,7 +292,7 @@
 #'
 #' mRNA analysis of breast cancer patients data from Krug et al. (2020) (data from the Clinical
 #' Proteomic Tumor Analysis Consortium (CPTAC)). The data is stratified by estrogen receptor (ER)
-#' expression status (`groupA` = ER+, `groupB` = ER-). The data was reduced to 120 genes.
+#' expression status (`groupA` = ER+, `groupB` = ER-). The data was reduced to 50 genes.
 #' For each group a data frame is given containing the raw data with the mRNA/gene as rows and the
 #' samples as columns. The first column contains the gene identifiers (gene_name).
 #'
@@ -312,7 +312,7 @@
 #'
 #' Protein analysis of breast cancer patients data from Krug et al. (2020) (data from the Clinical
 #' Proteomic Tumor Analysis Consortium (CPTAC)). The data is stratified by estrogen receptor (ER)
-#' expression status (`groupA` = ER+, `groupB` = ER-). The data was reduced to 120 genes.
+#' expression status (`groupA` = ER+, `groupB` = ER-). The data was reduced to 50 genes.
 #' For each group a data frame is given containing the raw data with the proteins as rows and the
 #' samples as columns. The first two columns contain the protein identifiers
 #' (ref_seq and gene_name).
@@ -333,7 +333,7 @@
 #'
 #' Phosphosite analysis of breast cancer patients data from Krug et al. (2020) (data from the Clinical
 #' Proteomic Tumor Analysis Consortium (CPTAC)). The data is stratified by estrogen receptor (ER)
-#' expression status (`groupA` = ER+, `groupB` = ER-). The data was reduced to 120 genes.
+#' expression status (`groupA` = ER+, `groupB` = ER-). The data was reduced to 50 genes.
 #' For each group a data frame is given containing the raw data with the phosphosites as rows and the
 #' samples as columns. The first three columns contain the phosphosite and protein identifiers
 #' (site_id, ref_seq and gene_name).
@@ -356,7 +356,8 @@
 #'
 #' Metabolomics analysis of breast cancer patients data sampled randomly to
 #' generate distributions similar to those reported (e.g., in Terunuma et al. (2014)).
-#' The data is stratified by estrogen receptor (ER) expression status (`groupA` = ER+, `groupB` = ER-).
+#' The data is stratified by estrogen receptor (ER) expression status (`groupA` = ER+, `groupB` = ER-). 
+#' The data was reduced to 50 metabolites. 
 #' For each group a data frame is given containing the raw data with the metabolites as rows and the
 #' samples as columns. The first three columns contain the metabolite identifiers
 #' (biochemical_name, metabolon_id and pubchem_id).

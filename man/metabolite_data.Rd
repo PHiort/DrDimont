@@ -31,7 +31,8 @@ metabolite_data
 \description{
 Metabolomics analysis of breast cancer patients data sampled randomly to
 generate distributions similar to those reported (e.g., in Terunuma et al. (2014)).
-The data is stratified by estrogen receptor (ER) expression status (`groupA` = ER+, `groupB` = ER-).
+The data is stratified by estrogen receptor (ER) expression status (`groupA` = ER+, `groupB` = ER-). 
+The data was reduced to 50 metabolites. 
 For each group a data frame is given containing the raw data with the metabolites as rows and the
 samples as columns. The first three columns contain the metabolite identifiers
 (biochemical_name, metabolon_id and pubchem_id).

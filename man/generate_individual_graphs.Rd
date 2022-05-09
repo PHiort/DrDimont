@@ -38,20 +38,20 @@ WGCNA::disableWGCNAThreads()
 data(layers_example)
 data(correlation_matrices_example)
 
-settings <- drdimont_settings(
-                     handling_missing_data=list(
+example_settings <- drdimont_settings(
+                       handling_missing_data=list(
                               default="pairwise.complete.obs",
                               mrna="all.obs"),
-                     reduction_method="pickHardThreshold",
-                     r_squared=list(default=0.8, groupA=list(metabolite=0.45),
-                                    groupB=list(metabolite=0.1)),
-                     cut_vector=list(default=seq(0.3, 0.7, 0.01),
-                                     metabolite=seq(0.35, 0.65, 0.01)),
-                     save_intermediate_data=FALSE,
-                     python_executable="python")
+                       reduction_method="pickHardThreshold",
+                       r_squared=list(default=0.65, metabolite=0.1),
+                       cut_vector=list(default=seq(0.2, 0.5, 0.01)),
+                       save_data=FALSE,
+                       python_executable="python")
 
-individual_graphs <- generate_individual_graphs(correlation_matrices_example,
-                                                layers_example, settings)
+individual_graphs <- generate_individual_graphs(
+                             correlation_matrices=correlation_matrices_example,
+                             layers=layers_example, 
+                             settings=example_settings)
 
 graph_metrics(individual_graphs$graphs$groupA$mrna)
 graph_metrics(individual_graphs$graphs$groupB$mrna)

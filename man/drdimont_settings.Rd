@@ -6,7 +6,7 @@
 \usage{
 drdimont_settings(
   saving_path = "./",
-  save_intermediate_data = TRUE,
+  save_data = TRUE,
   correlation_method = "spearman",
   handling_missing_data = "all.obs",
   reduction_method = "pickHardThreshold",
@@ -32,7 +32,7 @@ drdimont_settings(
 \arguments{
 \item{saving_path}{[string] Path to save intermediate output of DrDimont's functions. Default is current working directory.}
 
-\item{save_intermediate_data}{[bool] Specifying if intermediate data such as correlation_matrices, individual_graphs, etc.
+\item{save_data}{[bool] Specifying if intermediate data such as correlation_matrices, individual_graphs, etc.
 should be saved during \code{\link[DrDimont]{run_pipeline}}. (default: TRUE)}
 
 \item{correlation_method}{["pearson"|"spearman"|"kendall"] Correlation method used
