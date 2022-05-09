@@ -1,5 +1,5 @@
 ---
-title: "DrDimont: A Pipeline for Drug Response Prediction from Differential Analysis of Multi-omics Networks"
+title: "DrDimont: A Pipeline for Drug Response Prediction from Differential Analysis of Multi-Omics Networks"
 author: "Katharina Baum, Pauline Hiort, Julian Hugo, Spoorthi Kashyap, Nataniel Mueller, and Justus Zeinert"
 date: "`r Sys.Date()`"
 output: 
@@ -23,7 +23,7 @@ The main purpose of the pipeline is to easily and efficiently generate, reduce, 
 
 ## Installation
 
-The R package `DrDimont` can be installed with `remotes::install_gitlab("PHiort/DrDimont")`. The requirements of the package will be installed when installing the package. The complete source code can be accessed through https://gitlab.com/PHiort/DrDimont.
+The R package `DrDimont` can be installed via CRAN or with `remotes::install_gitlab("PHiort/DrDimont")`. The requirements of the package will be installed when installing the package. The complete source code can be accessed through https://gitlab.com/PHiort/DrDimont.
 
 After installation, load the package into your session with:
 ```{r setup, message=FALSE}
@@ -70,7 +70,7 @@ The data set contains observations from:
 |phosphosites|10272 (ER+) and 11318 (ER-)|quantified phosphoproteomics data; normalized, removed phosphosites with > 20% NAs, reduced|phosphosite, gene name, NCBI RefSeq ID|
 |Metabolite| 275 from 33 (ER+) and 34 (ER-) samples|randomly sampled metabolomics data; removed metabolites with > 50% NAs|biochemical name, PubChem ID, metabolon ID|
 
-To limit run time and space requirement of the example we reduced the mRNA, protein and phosphosite data to a random set of 120 genes. The 120 genes were selected from the set of genes with known drug targets from The Drug Gene Interaction Database (https://www.dgidb.org/).
+To limit run time and space requirement of the example we reduced the mRNA, protein and phosphosite data to a random set of 50 genes. The 50 genes were randomly selected from the set of genes with known drug targets from The Drug Gene Interaction Database (https://www.dgidb.org/). The metabolite data was also randomly reduced to 50 metabolites.
 
 ### Loading the data
 
@@ -222,7 +222,7 @@ The pipeline can be run entirely or in individual steps. To set global pipeline 
 
 Please be aware of the python script used in one of the pipeline steps (see Requirements above). If you have installed python and the required packages via pip then you should set the `drdimont_settings()` parameter `python_executable="python"` or `python_executable="python3"` depending on your installed python version. If you have installed python and the required packages manually in a custom conda environment then set the `drdimont_settings()` parameters `conda=TRUE` and `python_executable="-n name-of-your-environment python"`. If you are using the conda base environment then you can set `python_executable="python"`.
 
-The intermediate pipeline output (parameter `save_intermediate_data`) is deactivated for this example (see below) but  especially for large data files consider turning it on (the default). You can specify the output location of files with the `saving_path` parameter. If not specified all files will be written to the current working directory. For the this example, the data will be saved in a temporary directory. If you want to save the data elsewhere you need to change the parameter `saving_path` below. The intermediate output data includes RData-files of the correlation matrices, the individual graphs, the combined graphs, the drug target edges, the interaction score graphs, and the differential score graph. The drug response scores are always saved in a tsv-file in the specified output directory, even if `save_intermediate_data=FALSE`.
+The intermediate pipeline and drug response scores output (parameter `save_data`) is deactivated for this example (see below) but  especially for large data files consider turning it on (the default). You can specify the output location of files with the `saving_path` parameter. If not specified all files will be written to the current working directory. For the this example, the data will be saved in a temporary directory. If you want to save the data elsewhere you need to change the parameter `saving_path` below. The intermediate output data includes RData-files of the correlation matrices, the individual graphs, the combined graphs, the drug target edges, the interaction score graphs, and the differential score graph. The drug response scores are saved in a tsv-file in the specified output directory if `save_data=TRUE`.
 
 The settings list for the example (call `?drdimont_settings()` for further information on the parameters):
 ```{r Settings}
@@ -231,13 +231,10 @@ example_settings <- drdimont_settings(
                                 default = "pairwise.complete.obs",
                                 mrna = "all.obs"
                             ),
-                            reduction_method = list(default="pickHardThreshold"),
-                            r_squared=list(default=0.8, 
-                                           groupA=list(metabolite=0.45), 
-                                           groupB=list(metabolite=0.1)),
-                            cut_vector=list(default=seq(0.2, 0.7, 0.01), 
-                                            metabolite=seq(0.35, 0.65, 0.01)),
-                            save_intermediate_data = FALSE,
+                            reduction_method = "pickHardThreshold",
+                            r_squared=list(default=0.65, metabolite=0.1),
+                            cut_vector=list(default=seq(0.2, 0.65, 0.01)),
+                            save_data = FALSE,
                             python_executable = "python3",
                             saving_path = tempdir())
 # disable multi-threading for example run; 
@@ -275,11 +272,17 @@ The pipeline can also be used in a modular fashion. The modules then refer to th
 
 ### Step 1: Compute correlation matrices
 
-In step one, correlation matrices are computed for the specified layers described above. `spearman` (default), `pearson`, and `kendall` can be chosen as correlation methods by setting the parameter `reduction_method` in `drdimont_settings()`. The list of layers and the settings list are passed to `compute_correlation_matrices()`.
+In step one, correlation matrices are computed for the specified layers described above. `spearman` (default), `pearson`, and `kendall` can be chosen as correlation methods by setting the parameter `reduction_method` in `drdimont_settings()`. The list of layers and the settings list are passed to `compute_correlation_matrices()`. To reduce run time this example will  only analyze the first 10 genes and patients of the mRNA layer (set `layers=all_layers` in `compute_correlation_matrices()` to compute all layers):
 
 ```{r Correlation matrices, message=FALSE, results='hide'}
+reduced_mrna_layer <- make_layer(name="mrna",
+                           data_groupA=t(mrna_data$groupA[1:10,2:11]),
+                           data_groupB=t(mrna_data$groupB[1:10,2:11]),
+                           identifiers_groupA=data.frame(gene_name=mrna_data$groupA$gene_name[1:10]),
+                           identifiers_groupB=data.frame(gene_name=mrna_data$groupB$gene_name[1:10]))
+
 example_correlation_matrices <- compute_correlation_matrices(
-                                            layers=all_layers, 
+                                            layers=list(reduced_mrna_layer), 
                                             settings=example_settings)
 ```
 
@@ -288,7 +291,8 @@ The resulting data structure `example_correlation_matrices` is a nested named li
 For example:
 ```{r}
 # Data inspection
-example_correlation_matrices$annotations$groupA$protein[1:3, ]
+data("correlation_matrices_example")
+correlation_matrices_example$annotations$groupA$protein[1:3, ]
 ```
 
 ### Step 2: Generate individual graphs
@@ -296,13 +300,14 @@ example_correlation_matrices$annotations$groupA$protein[1:3, ]
 Next, the individual graphs are generated. In this step edge weights are established based on the correlation computation and the edges are reduced by the specified reduction method. Reduction can be done based on maximizing scale-freeness employing `WGCNA::pickHardThreshold` (`reduction_method=pickHardThreshold` in `drdimont_settings()`; default) or based on significance of the correlation (`reduction_method=p_value`).
 
 ```{r Individual graphs, message=FALSE, results='hide'}
+data("correlation_matrices_example")
 example_individual_graphs <- generate_individual_graphs(
-                                        correlation_matrices=example_correlation_matrices, 
+                                        correlation_matrices=correlation_matrices_example, 
                                         layers=all_layers, 
                                         settings=example_settings)
 ```
 
-The resulting data structure `example_individual_graphs` is a nested named list with 3 levels containing the graphs and annotation data frames. The element `graphs` contains, similar to the correlation matrices, the two groups on the second level and the graphs as iGraphs objects for each molecular layer on the third level. The `annotations` element is a copy from the `annotations` element of the `example_correlation_matrices` data (eee Step 1).
+The resulting data structure `example_individual_graphs` is a nested named list with 3 levels containing the graphs and annotation data frames. The element `graphs` contains, similar to the correlation matrices, the two groups on the second level and the graphs as iGraphs objects for each molecular layer on the third level. The `annotations` element is a copy from the `annotations` element of the `example_correlation_matrices` data (see Step 1).
 
 
 ### Step 3: Combine graphs
@@ -351,7 +356,7 @@ The Python script for integrated interaction score computation is parallelized u
 <b> Running Ray on a compute cluster </b>: If you want to run DrDimont on a cluster, run `ray start --head --num-cpus 12` (change number of CPUs as fit) on the command line, before starting the R session.
 
 
-```{r Calculate interaction score, eval = FALSE}
+```{r Calculate interaction score, eval=FALSE}
 example_interaction_score_graphs <- generate_interaction_score_graphs(
                                             graphs=example_combined_graphs[["graphs"]], 
                                             drug_target_edgelists=drug_targets[["edgelists"]], 
@@ -378,7 +383,7 @@ example_differential_graph <- generate_differential_score_graph(
 
 In the last step, the differential drug response score is calculated based on the differential graph. The score of a drug is the mean (default) or the median of all differential integrated interaction scores of the edges incident to the drug targets. Drugs that have only targets without any edges have a `NA` as differential drug response.
 
-```{r Drug response, eval = FALSE}
+```{r Drug response}
 example_drug_response_scores <- compute_drug_response_scores(
                                                      differential_graph=example_differential_graph,
                                                      drug_targets=example_drug_target_edges[["targets"]],
@@ -388,8 +393,7 @@ example_drug_response_scores <- compute_drug_response_scores(
 The first few lines of the resulting data frame are shown below. The data frame is saved as `drug_response_score.tsv` in the specified output folder (see above). The drug response score is an indirect measure of how the strength of connectivity differs between the groups for the drug targets of the particular drug.
 
 ```{r Result Output}
-data("drug_response_scores_example")
-head(dplyr::filter(drug_response_scores_example, !is.na(drug_response_score)))
+head(dplyr::filter(example_drug_response_scores, !is.na(drug_response_score)))
 ```
 
 ## References
@@ -403,4 +407,4 @@ Terunuma et al.(2014):
 
 * Terunuma, Atsushi et al. “MYC-driven accumulation of 2-hydroxyglutarate is associated with breast cancer prognosis.” The Journal of clinical investigation vol. 124,1 (2014): 398-412. https://www.doi.org/10.1172/JCI71180
 
-The package `DrDimont` is an updated version of the previously published `molnet` package (https://github.com/molnet-org/molnet; https://cran.r-project.org/web/packages/molnet/index.html)
+The package `DrDimont` is an updated version of the previously published `molnet` package (https://github.com/molnet-org/molnet; https://CRAN.R-project.org/package=molnet)

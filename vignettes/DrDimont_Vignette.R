@@ -100,13 +100,10 @@ example_settings <- drdimont_settings(
                                 default = "pairwise.complete.obs",
                                 mrna = "all.obs"
                             ),
-                            reduction_method = list(default="pickHardThreshold"),
-                            r_squared=list(default=0.8, 
-                                           groupA=list(metabolite=0.45), 
-                                           groupB=list(metabolite=0.1)),
-                            cut_vector=list(default=seq(0.2, 0.7, 0.01), 
-                                            metabolite=seq(0.35, 0.65, 0.01)),
-                            save_intermediate_data = FALSE,
+                            reduction_method = "pickHardThreshold",
+                            r_squared=list(default=0.65, metabolite=0.1),
+                            cut_vector=list(default=seq(0.2, 0.65, 0.01)),
+                            save_data = FALSE,
                             python_executable = "python3",
                             saving_path = tempdir())
 # disable multi-threading for example run; 
@@ -121,17 +118,25 @@ WGCNA::disableWGCNAThreads()
 #               settings=example_settings)
 
 ## ----Correlation matrices, message=FALSE, results='hide'----------------------
+reduced_mrna_layer <- make_layer(name="mrna",
+                           data_groupA=t(mrna_data$groupA[1:10,2:11]),
+                           data_groupB=t(mrna_data$groupB[1:10,2:11]),
+                           identifiers_groupA=data.frame(gene_name=mrna_data$groupA$gene_name[1:10]),
+                           identifiers_groupB=data.frame(gene_name=mrna_data$groupB$gene_name[1:10]))
+
 example_correlation_matrices <- compute_correlation_matrices(
-                                            layers=all_layers, 
+                                            layers=list(reduced_mrna_layer), 
                                             settings=example_settings)
 
 ## -----------------------------------------------------------------------------
 # Data inspection
-example_correlation_matrices$annotations$groupA$protein[1:3, ]
+data("correlation_matrices_example")
+correlation_matrices_example$annotations$groupA$protein[1:3, ]
 
 ## ----Individual graphs, message=FALSE, results='hide'-------------------------
+data("correlation_matrices_example")
 example_individual_graphs <- generate_individual_graphs(
-                                        correlation_matrices=example_correlation_matrices, 
+                                        correlation_matrices=correlation_matrices_example, 
                                         layers=all_layers, 
                                         settings=example_settings)
 
@@ -153,7 +158,7 @@ example_drug_target_edges <- determine_drug_targets(
                                         drug_target_interactions=all_drug_target_interactions, 
                                         settings=example_settings)
 
-## ----Calculate interaction score, eval = FALSE--------------------------------
+## ----Calculate interaction score, eval=FALSE----------------------------------
 #  example_interaction_score_graphs <- generate_interaction_score_graphs(
 #                                              graphs=example_combined_graphs[["graphs"]],
 #                                              drug_target_edgelists=drug_targets[["edgelists"]],
@@ -169,13 +174,12 @@ example_differential_graph <- generate_differential_score_graph(
 #                                           interaction_score_graphs=example_interaction_score_graphs, 
 #                                           settings=example_settings)
 
-## ----Drug response, eval = FALSE----------------------------------------------
-#  example_drug_response_scores <- compute_drug_response_scores(
-#                                                       differential_graph=example_differential_graph,
-#                                                       drug_targets=example_drug_target_edges[["targets"]],
-#                                                       settings=example_settings)
+## ----Drug response------------------------------------------------------------
+example_drug_response_scores <- compute_drug_response_scores(
+                                                     differential_graph=example_differential_graph,
+                                                     drug_targets=example_drug_target_edges[["targets"]],
+                                                     settings=example_settings)
 
 ## ----Result Output------------------------------------------------------------
-data("drug_response_scores_example")
-head(dplyr::filter(drug_response_scores_example, !is.na(drug_response_score)))
+head(dplyr::filter(example_drug_response_scores, !is.na(drug_response_score)))
 
