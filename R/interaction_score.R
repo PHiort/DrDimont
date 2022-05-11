@@ -12,8 +12,9 @@ write_interaction_score_input <- function(combined_graphs, drug_target_edgelists
     #' @param saving_path [string] Path to save intermediate output of DrDimont's functions.
     #' Default is current working directory.
     #'
+    #' @return No return value, used internally
+    #' 
     #' @export
-    #'
 
     # iterate over groups
     for(group in c("groupA", "groupB")) {
@@ -68,8 +69,8 @@ calculate_interaction_score <- function(max_path_length,
     #' @param graphB_null [bool] Specifying if graphB of `groupB` is given (FALSE) or not (TRUE). (default: FALSE)
     #'
     #' @return Does not return anything, instead calls Python script which outputs `gml` files
+    #' 
     #' @export
-    #'
 
     py_script <- ifelse(is.null(script_path), system.file("python_igraph_interaction_score.py", package = "DrDimont"), script_path)
     graph_file_groupA <- paste0(saving_path, '/combined_graph_groupA.gml')
@@ -155,8 +156,8 @@ load_interaction_score_output <- function(saving_path, graphB_null) {
     #'
     #' @return A named list (elements `groupA` and `groupB`). Each element contains an iGraph object
     #' containing the interaction score as edge attribute.
+    #' 
     #' @export
-    #'
 
     graphs <- list()
 

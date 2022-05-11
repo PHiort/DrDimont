@@ -16,10 +16,11 @@ create_unique_layer_node_ids <- function(identifiersA, identifiersB, layer_name)
     #' group of the same network layer.
     #' @param layer_name [string] Name of layer that the node ids are created for
     #'
-    #' @export
     #' @return Returns an named list. Elements `groupA` and `groupB` contain the input
     #' data frames with an additional column `node_id`. `both` contains all unique node IDs assigned
     #' across the network layer.
+    #' 
+    #' @export
 
     ##### check if only 1 group given
     if (is.null(identifiersB)){
@@ -113,10 +114,10 @@ generate_reduced_graph <- function(adjacency_matrix,
     #' during network reduction with method `p_value`. (default: 10^6)
     #' @param print_graph_info [bool] Specifying if a summary of the reduced graph should be printed to
     #' the console after network generation. (default: TRUE)
-    #'
-    #' @export
+    #' 
     #' @return iGraph graph object of the reduced network.
-    #'
+    #' 
+    #' @export
 
     # network reduction
     if (reduction_method == 'p_value') {
@@ -182,10 +183,11 @@ sample_size <- function(measurement_data, handling_missing_data) {
     #' @return For 'all.obs' returns an integer indicating the number of samples in the supplied
     #' matrix (i.e. number of rows). For 'pairwise.complete.obs' returns a matrix in the same size
     #' of the correlation matrix indicating the number of samples for each correlation calculation.
-    #' @export
+    #' 
     #' @source Method to calculate samples in `pairwise.complete.obs` adopted and improved from
     #' \code{\link[WGCNA]{corAndPvalue}}
-    #'
+    #' 
+    #' @export
 
     if (handling_missing_data == 'all.obs') { n_samples <- dim(measurement_data)[1]
     }

@@ -9,6 +9,9 @@ set_cluster(n_threads)
 \arguments{
 \item{n_threads}{[int] Number of nodes in the cluster}
 }
+\value{
+No return value, called internally to create cluster
+}
 \description{
 [INTERNAL] Helper function to create and register a cluster for parallel
 computation of p-value reduction

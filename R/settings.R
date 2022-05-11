@@ -1,7 +1,7 @@
 drdimont_settings <- function(
                         ### saving
-                        saving_path = './',
-                        save_data = TRUE,
+                        saving_path = 'tempdir()',
+                        save_data = FALSE,
                         ### network generation
                         correlation_method = "spearman",
                         handling_missing_data = "all.obs",
@@ -113,7 +113,6 @@ drdimont_settings <- function(
     #' @param ... Supply additional settings.
     #'
     #' @return Named list of settings
-    #' @export
     #'
     #' @examples
     #' settings <- drdimont_settings(
@@ -123,9 +122,12 @@ drdimont_settings <- function(
     #'                                mrna="all.obs"),
     #'                      reduction_method="pickHardThreshold",
     #'                      max_path_length=3)
-    #'
+    #' 
+    #' @export
+    
     settings <- c(as.list(environment()), list(...))
     return(settings)
+
 }
 
 get_layer_setting <- function(layer, group, settings, setting_name) {
@@ -138,8 +140,9 @@ get_layer_setting <- function(layer, group, settings, setting_name) {
     #' @param settings [list] Named list of settings created by \code{\link[DrDimont]{drdimont_settings}}
     #' @param setting_name [string] String indicating the setting to return.
     #' @return Setting value(s) for this layer (and group)
+    #' 
     #' @export
-    #'
+    
     if (!is.list(settings[[setting_name]])) {return(settings[[setting_name]])}
     else if (!is.null(settings[[setting_name]][[group]][[layer]])) {return(settings[[setting_name]][[group]][[layer]])}
     else if (!is.null(settings[[setting_name]][[layer]])) {return(settings[[setting_name]][[layer]])}

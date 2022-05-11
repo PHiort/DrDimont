@@ -1,60 +1,41 @@
 Package: DrDimont
 Type: Package
-Title: A Pipeline for Drug Response Prediction from Differential Analysis of Multi-omics Networks
-Version: 0.1.0
+Title: Drug Response Prediction from Differential Multi-Omics Networks
+Version: 0.1.2
 Authors@R: c(
-    person(given = "Katharina",
-           family = "Baum",
-           email = "katharina.baum@hpi.de",
-           role = c("cre"),
-           comment = c(ORCID = "0000-0001-7256-0566")),
-    person(given = "Pauline",
-           family = "Hiort",
-           email = "pauline.hiort@hpi.de",
-           role = c("aut"),
-           comment = c(ORCID = "0000-0002-3530-7358")),
-    person(given = "Julian",
-           family = "Hugo",
-           email = "julian.hugo@student.hpi.de",
-           role = c("aut"),
-           comment = c(ORCID = "0000-0003-3355-1071")),
-    person(given = "Spoorthi",
-           family = "Kashyap",
-           email = "spoorthi.kashyap@student.hpi.de",
-           role = c("aut")),
-    person(given = "Nataniel",
-           family = "Müller",
-           email = "nataniel.mueller@student.hpi.de",
-           role = c("aut"),
-           comment = c(ORCID = "0000-0002-0275-3992")),
-    person(given = "Justus",
-           family = "Zeinert",
-           email = "justus.zeinert@student.hpi.de",
-           role = c("aut"),
-           comment = c(ORCID = "0000-0003-3918-0507"))
-    )
-Description: Networks provide a means to incorporate molecular interactions into
-    reasoning on the omics-level, they are currently mainly used to combine
-    genomic and proteomic information. We here present a novel network analysis
-    pipeline that enables integrative analysis of multi-omics data including
-    metabolomics. It allows for comparative conclusions between two different
-    conditions, such as tumor subgroups, healthy vs. disease, or generally control
-    vs. perturbed.
-    Our approach focuses on interactions and their strength instead of on node
-    properties and includes molecules with low abundance and unknown function. We
-    use correlation-induced networks that are reduced and combined to form 
-    heterogeneous, multi-omics molecular networks. Prior information such as
-    metabolite-protein interactions are incorporated. A semi-local, path-based
-    integration step denoises the network and ensures integrative conclusions. As
-    case studies, we investigate differential drug response in breast cancer tumor
-    datasets providing proteomics, transcriptomics, phospho-proteomics and
-    metabolomics data and contrasting patients with different estrogen receptor
-    status.
-    Our proposed pipeline leverages multi-omics data for differential predictions,
-    e.g. on drug response, and includes prior information on interactions.
-    The case study presented in the vignette uses data published by
-    Krug (2020) <doi:10.1016/j.cell.2020.10.036>. The package license applies only
-    to the software and explicitly not to the included data.
+  person("Katharina", "Baum", , "katharina.baum@hpi.de", role = "cre",
+         comment = c(ORCID = "0000-0001-7256-0566")),
+  person("Pauline", "Hiort", , "pauline.hiort@hpi.de", role = "aut",
+         comment = c(ORCID = "0000-0002-3530-7358")),
+  person("Julian", "Hugo", , "julian.hugo@student.hpi.de", role = "aut",
+         comment = c(ORCID = "0000-0003-3355-1071")),
+  person("Spoorthi", "Kashyap", , "spoorthi.kashyap@student.hpi.de", role = "aut"),
+  person("Nataniel", "Müller", , "nataniel.mueller@student.hpi.de", role = "aut",
+         comment = c(ORCID = "0000-0002-0275-3992")),
+  person("Justus", "Zeinert", , "justus.zeinert@student.hpi.de", role = "aut",
+         comment = c(ORCID = "0000-0003-3918-0507"))
+  )
+Description: While it has been well established that drugs affect and help
+  patients differently, personalized drug response predictions remain 
+  challenging. Solutions based on single omics measurements have been proposed, 
+  and networks provide means to incorporate molecular interactions into reasoning. 
+  However, how to integrate the wealth of information contained in multiple omics 
+  layers still poses a complex problem. 
+  We present a novel network analysis pipeline, DrDimont, Drug response prediction 
+  from Differential analysis of multi-omics networks. It allows for comparative 
+  conclusions between two conditions and translates them into differential drug 
+  response predictions. DrDimont focuses on molecular interactions. It establishes 
+  condition-specific networks from correlation within an omics layer that are 
+  then reduced and combined into heterogeneous, multi-omics molecular networks. 
+  A novel semi-local, path-based integration step ensures integrative conclusions. 
+  Differential predictions are derived from comparing the condition-specific 
+  integrated networks. DrDimont's predictions are explainable, i.e., molecular 
+  differences that are the source of high differential drug scores can be retrieved.
+  Our proposed pipeline leverages multi-omics data for differential predictions,
+  e.g. on drug response, and includes prior information on interactions.
+  The case study presented in the vignette uses data published by
+  Krug (2020) <doi:10.1016/j.cell.2020.10.036>. The package license applies only
+  to the software and explicitly not to the included data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -62,20 +43,19 @@ LazyDataCompression: xz
 RoxygenNote: 7.1.2
 VignetteBuilder: knitr
 Imports: 
-    igraph,
-    dplyr,
-    stringr,
-    WGCNA,
-    Rfast,
-    readr,
-    tibble,
-    tidyr,
-    magrittr,
-    rlang,
-    utils,
-    stats
+  igraph,
+  dplyr,
+  stringr,
+  WGCNA,
+  Rfast,
+  readr,
+  tibble,
+  tidyr,
+  magrittr,
+  rlang,
+  utils,
+  stats
 Suggests: 
-    rmarkdown,
-    knitr
-Depends: 
-    R (>= 3.5.0)
+  rmarkdown,
+  knitr
+Depends: R (>= 3.5.0)

@@ -6,6 +6,9 @@
 \usage{
 shutdown_cluster()
 }
+\value{
+No return value, called internally to shutdown cluster
+}
 \description{
 [INTERNAL] Run this if the pipeline fails during parallel 
 computation to clean the state. If a cluster is registered, this functions 

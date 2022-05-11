@@ -32,8 +32,6 @@ differential drug response score. The score is the mean or median of all differe
 edges adjacent to all drug target nodes of a particular drug.
 }
 \examples{
-
-
 data(drug_target_edges_example)
 data(differential_graph_example)
 

@@ -41,7 +41,7 @@ example_settings <- drdimont_settings(
                        reduction_method="pickHardThreshold",
                        save_data=FALSE,
                        python_executable="python")
-\dontrun{
+\donttest{
 correlation_matrices <- compute_correlation_matrices(
                              layers=layers_example, 
                              settings=example_settings)

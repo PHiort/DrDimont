@@ -1,12 +1,12 @@
 ---
-title: "DrDimont: A Pipeline for Drug Response Prediction from Differential Analysis of Multi-Omics Networks"
+title: "DrDimont: Drug Response Prediction from Differential Multi-Omics Networks"
 author: "Katharina Baum, Pauline Hiort, Julian Hugo, Spoorthi Kashyap, Nataniel Mueller, and Justus Zeinert"
 date: "`r Sys.Date()`"
 output: 
     rmarkdown::html_vignette: 
     toc: true 
 vignette: >
-  %\VignetteIndexEntry{A Pipeline for Drug Response Prediction from Differential Analysis of Multi-omics Networks}
+  %\VignetteIndexEntry{Drug Response Prediction from Differential Multi-Omics Networks}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

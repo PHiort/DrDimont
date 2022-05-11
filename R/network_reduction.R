@@ -5,10 +5,11 @@ chunk <- function(x, chunk_size) (
     #' @param x Vector
     #' @param chunk_size [int] Length of chunks
     #'
-    #' @export
-    #'
     #' @return A list of chunks of length chunk_size
     #' @source https://stackoverflow.com/questions/3318333/split-a-vector-into-chunks
+    #' 
+    #' @export
+    
     mapply(function(a, b) (x[a:b]),
            seq.int(from=1, to=length(x), by=chunk_size),
            pmin(seq.int(from=1, to=length(x), by=chunk_size) + (chunk_size-1), length(x)),
@@ -22,11 +23,12 @@ chunk_2gether <- function(x, y, chunk_size) (
     #' @param x,y Vectors
     #' @param chunk_size [int] Length of chunks
     #'
-    #' @export
-    #'
     #' @return A list of lists. Each second level list contains a list of chunks of length chunk_size of each
     #' input vector.
     #' @source modified from: https://stackoverflow.com/questions/3318333/split-a-vector-into-chunks
+    #' 
+    #' @export
+    
     mapply(function(a, b) (list(x[a:b], y[a:b])),
            seq.int(from=1, to=length(x), by=chunk_size),
            pmin(seq.int(from=1, to=length(x), by=chunk_size) + (chunk_size-1), length(x)),
@@ -42,11 +44,11 @@ corPvalueStudentParallel <- function(adjacency_matrix, number_of_samples, chunk_
     #' @param number_of_samples [matrix] Matrix of number of samples used in computation of each correlation value. Computed applying
     #' \code{\link[DrDimont]{sample_size}}
     #' @param chunk_size [int] Smallest unit of work in parallel computation (number of p-values to compute)
-    #'
-    #' @export
-    #'
+    #' 
     #' @return Vector of p-values for upper triangle
     #'
+    #' @export
+    
     if (is.matrix(number_of_samples)) {
         # if number_of_samples is a matrix, 'pairwise.complete.obs' was used -> supply number of samples for each individual correlation calculated
         # WGCNA::corPvalueStudent can also take a vector as input
@@ -90,8 +92,7 @@ network_reduction_by_p_value <- function(adjacency_matrix,
     #' of several methods. A significance threshold `alpha` can be set. All value entries below this threshold within the
     #' initial adjacency matrix will be set to NA. If a default cluster is registered with the `parallel` package the
     #' computation will happen in parallel automatically.
-    #'
-    #'
+    #' 
     #' @param adjacency_matrix [matrix] Adjacency matrix of correlations computed using \code{\link[WGCNA]{cor}} in
     #' \code{\link[DrDimont]{compute_correlation_matrices}}
     #' @param number_of_samples [int|matrix] The number of samples used to calculate the correlation matrix. Computed applying
@@ -102,11 +103,11 @@ network_reduction_by_p_value <- function(adjacency_matrix,
     #' during reduction. Not-significant edges are dropped. (default: 0.05)
     #' @param parallel_chunk_size [int] Number of p-values in smallest work unit when computing in parallel
     #' during network reduction with method `p_value`. (default: 10^6)
-    #'
-    #' @export
+    #' 
     #' @return A reduced adjacency matrix with NA's at martix entries with p-values below threshold.
     #' @source \code{\link[WGCNA]{corPvalueStudent}}
-    #'
+    #' 
+    #' @export
 
     if (is.null(parallel::getDefaultCluster())) {
         # compute p values on upper triangle only (-> symmetric matrix)
@@ -168,13 +169,15 @@ network_reduction_by_pickHardThreshold <- function(adjacency_matrix,
     #' @param edge_density [float] Find a suitable edge weight cutoff employing \code{\link[WGCNA]{pickHardThreshold}} to reduce the
     #' network to at most the specified edge density. Attention: This parameter overwrites the 'r_squared_cutoff' parameter if not set
     #' to NULL. (default: NULL)
-    #' @export
+    #' 
     #' @source The original implementation of pickHardThreshold is used from
     #' \code{\link[WGCNA]{pickHardThreshold.fromSimilarity}}
     #'
     #' @return A reduced adjacency matrix of correlations with NA's inserted at positions below
     #' estimated cutoff.
-    #'
+    #' 
+    #' @export
+    
     message(format(Sys.time(), "[%y-%m-%d %X] "), 'Reducing network by WGCNA::pickHardThreshold...')
 
     ### if mean number of edges given calculate cut threshold based on WGCNA::pickHardThreshold.fromSimilarity() mean.k. values

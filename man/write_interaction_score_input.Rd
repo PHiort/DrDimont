@@ -20,6 +20,9 @@ contains the list of edges to be considered in the interaction score calculation
 \item{saving_path}{[string] Path to save intermediate output of DrDimont's functions.
 Default is current working directory.}
 }
+\value{
+No return value, used internally
+}
 \description{
 [INTERNAL] Writes the combined graphs and the drug target edge lists to files for
 passing them to the python interaction score script.

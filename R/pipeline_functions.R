@@ -16,7 +16,6 @@ make_layer <- function(name, data_groupA, data_groupB, identifiers_groupA, ident
     #' @return Named list containing the supplied data for each group (i.e., the data set for one
     #' layer), that can be supplied to \code{\link[DrDimont]{run_pipeline}} and `name` giving the name of the
     #' layer. Each sub-list contains the `data` and the `identifiers`.
-    #' @export
     #'
     #' @examples
     #' data(protein_data)
@@ -30,6 +29,7 @@ make_layer <- function(name, data_groupA, data_groupB, identifiers_groupA, ident
     #'                      identifiers_groupB=data.frame(gene_name=protein_data$groupB$gene_name,
     #'                                                   ref_seq=protein_data$groupB$ref_seq))
     #'
+    #' @export
 
     ### if group2 data and identifiers not given set it to NULL
     if ((is.null(data_groupB)) & (is.null(identifiers_groupB))){
@@ -75,9 +75,9 @@ make_connection <- function(from, to, connect_on, weight=1, group="both") {
     #' Based on interaction table: Character string specifying the name of a column in the
     #' table passed as the `by` parameter which is used as edge weight. (default: 1)
     #' @param group ["A"|"B"|"both"] Group for which to apply the connection. One of `both`, `A` or `B`. (default: "both")
+    #' 
     #' @return A named list (i.e., an inter-layer connection), that can be supplied to
     #' \code{\link[DrDimont]{run_pipeline}}.
-    #' @export
     #'
     #' @examples
     #' data(metabolite_protein_interactions)
@@ -89,6 +89,7 @@ make_connection <- function(from, to, connect_on, weight=1, group="both") {
     #'                                                connect_on=metabolite_protein_interactions,
     #'                                                weight='combined_score'))
     #'
+    #' @export
 
     inter_layer_connections <- list(from=from, to=to, by="", connect_on=connect_on, weight=weight, group=group)
     if (is.character(connect_on) & is.vector(connect_on) & length(connect_on) == 1) { inter_layer_connections$by <- "id" }
@@ -120,14 +121,14 @@ make_drug_target <- function(target_molecules, interaction_table, match_on) {
     #' matching drugs and target nodes in the graph (e.g. `ncbi_id`).
     #'
     #' @return Named list of the input parameters in input format of \code{\link[DrDimont]{run_pipeline}}.
-    #' @export
     #'
     #' @examples
     #' data(drug_gene_interactions)
     #' drug_target_interactions <- make_drug_target(target_molecules='protein',
     #'                                             interaction_table=drug_gene_interactions,
     #'                                             match_on='gene_name')
-    #'
+    #' 
+    #' @export
 
     res <- list(target_molecules=target_molecules, interaction_table=interaction_table, match_on=match_on)
     return_errors(check_drug_target(res))
@@ -174,8 +175,7 @@ run_pipeline <- function(layers, inter_layer_connections, drug_target_interactio
     #' @return Data frame containing drug name and associated differential integrated drug response score.
     #' If Python is not installed or the interaction score computation fails for some other reason, NULL
     #' is returned instead.
-    #'
-    #' @export
+    #' 
     #' @examples
     #' \dontshow{
     #' WGCNA::disableWGCNAThreads()
@@ -206,14 +206,15 @@ run_pipeline <- function(layers, inter_layer_connections, drug_target_interactio
     #'                        save_data=FALSE,
     #'                        python_executable="python")
     #'
-    #' \dontrun{
+    #' \donttest{
     #' run_pipeline(
     #'      layers=layers_example, 
     #'      inter_layer_connections=example_inter_layer_connections, 
     #'      drug_target_interactions=example_drug_target_interactions, 
     #'      settings=example_settings)
     #' }
-    #'
+    #' 
+    #' @export
 
     message(format(Sys.time(), "[%y-%m-%d %X] "), "### Pipeline started ###")
     message(format(Sys.time(), "[%y-%m-%d %X] "), "Validating input...")
@@ -309,7 +310,7 @@ compute_correlation_matrices <- function(layers, settings) {
     #'                        reduction_method="pickHardThreshold",
     #'                        save_data=FALSE,
     #'                        python_executable="python")
-    #' \dontrun{
+    #' \donttest{
     #' correlation_matrices <- compute_correlation_matrices(
     #'                              layers=layers_example, 
     #'                              settings=example_settings)
@@ -392,7 +393,6 @@ generate_individual_graphs <- function(correlation_matrices, layers, settings) {
     #' level elements are `groupA` and `groupB` (and `both` at `annotations`). These contain a list of
     #' iGraph objects (`graphs`) and data frames (`annotations`) mapping the graph node IDs to biological
     #' identifiers. The third level elements are layer names given by the user.
-    #' @export
     #'
     #' @examples
     #' \dontshow{
@@ -419,7 +419,8 @@ generate_individual_graphs <- function(correlation_matrices, layers, settings) {
     #'
     #' graph_metrics(individual_graphs$graphs$groupA$mrna)
     #' graph_metrics(individual_graphs$graphs$groupB$mrna)
-    #'
+    #' 
+    #' @export
 
 
     ### empty list to store igraph objects of individual layers and inter-layer connections
@@ -528,7 +529,6 @@ generate_combined_graphs <- function(graphs, annotations, inter_layer_connection
     #' @return A named list (elements `graphs` and sub-elements `$groupA` and
     #' `$groupB`, and `annotations` and sub-element `both`). Contains the igraph objects of the combined
     #' network and their annotations for both groups.
-    #' @export
     #'
     #' @examples
     #' \dontshow{
@@ -555,7 +555,8 @@ generate_combined_graphs <- function(graphs, annotations, inter_layer_connection
     #'                            annotations=individual_graphs_example$annotations,
     #'                            inter_layer_connections=example_inter_layer_connections,
     #'                            settings=example_settings)
-    #'
+    #' 
+    #' @export
 
     inter_layer_edges <- list()
 
@@ -699,7 +700,6 @@ determine_drug_targets <- function(graphs, annotations, drug_target_interactions
     #' a named list mapping drug names to a vector of their target node IDs.
     #' `edgelists` contains elements `groupA` and `groupB` containing each a list of
     #' edges adjacent to drug target nodes.
-    #' @export
     #'
     #' @examples
     #' data(drug_gene_interactions)
@@ -719,6 +719,7 @@ determine_drug_targets <- function(graphs, annotations, drug_target_interactions
     #'                            drug_target_interactions=example_drug_target_interactions,
     #'                            settings=example_settings)
     #'
+    #' @export
 
     drug_target_edge_list <- list()
     drug_targets_list <- list()
@@ -788,7 +789,6 @@ generate_interaction_score_graphs <- function(graphs, drug_target_edgelists, set
     #'
     #' @return A named list (elements `groupA` and `groupB`). Each element contains an iGraph object
     #' containing the interaction scores as interaction_weight attributes.
-    #' @export
     #'
     #' @examples
     #' data(combined_graphs_example)
@@ -798,13 +798,14 @@ generate_interaction_score_graphs <- function(graphs, drug_target_edgelists, set
     #'                        save_data=FALSE,
     #'                        python_executable="python")
     #'
-    #' \dontrun{
+    #' \donttest{
     #' interaction_score_graphs <- generate_interaction_score_graphs(
     #'                                          graphs=combined_graphs_example$graphs,
     #'                                          drug_target_edgelists=drug_target_edges_example$edgelists,
     #'                                          settings=example_settings)
     #' }
-    #'
+    #' 
+    #' @export
 
     tryCatch({
         total_edges <- sapply(graphs, igraph::ecount)
@@ -860,8 +861,7 @@ generate_differential_score_graph <- function(interaction_score_graphs, settings
     #' adjusted as desired.
     #'
     #' @return iGraph object with `differential_score` and `differential_interaction_score` as edge attributes
-    #' @export
-    #'
+    #' 
     #' @examples
     #' data(interaction_score_graphs_example)
     #'
@@ -875,6 +875,7 @@ generate_differential_score_graph <- function(interaction_score_graphs, settings
     #'
     #' @importFrom rlang .data
     #' 
+    #' @export
 
     message(format(Sys.time(), "[%y-%m-%d %X] "), "Computing differential networks...")
 
@@ -971,12 +972,9 @@ compute_drug_response_scores <- function(differential_graph, drug_targets, setti
     #' initialized by \code{\link[DrDimont]{drdimont_settings}}. Items in the named list can be
     #' adjusted as desired.
     #'
-    #' @export
-    #'
     #' @return Data frame containing drug name and associated differential (integrated) drug response score
+    #' 
     #' @examples
-    #'
-    #'
     #' data(drug_target_edges_example)
     #' data(differential_graph_example)
     #'
@@ -991,6 +989,7 @@ compute_drug_response_scores <- function(differential_graph, drug_targets, setti
     #' 
     #' @importFrom rlang .data
     #' 
+    #' @export
 
 
     ### mean drug response else median drug response

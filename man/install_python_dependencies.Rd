@@ -9,6 +9,9 @@ install_python_dependencies(package_manager = "pip3")
 \arguments{
 \item{package_manager}{[string] The package manager command or path to use (default: pip3)}
 }
+\value{
+No return value, called to install python dependencies
+}
 \description{
 Uses specified pip or conda executable (default: pip3) to 
 install all required python modules. When using conda, the currently active 

@@ -24,4 +24,5 @@ drug_target_interactions <- make_drug_target(
                                  interaction_table=drug_gene_interactions,
                                  match_on='gene_name')
 return_errors(check_drug_target(drug_target_interactions))
+
 }

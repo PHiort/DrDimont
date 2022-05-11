@@ -83,7 +83,7 @@ example_settings <- drdimont_settings(
                        save_data=FALSE,
                        python_executable="python")
 
-\dontrun{
+\donttest{
 run_pipeline(
      layers=layers_example, 
      inter_layer_connections=example_inter_layer_connections, 

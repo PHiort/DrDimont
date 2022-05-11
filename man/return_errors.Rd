@@ -9,6 +9,9 @@ return_errors(errors)
 \arguments{
 \item{errors}{[string] Character string vector containing error messages.}
 }
+\value{
+No return value, writes error messages to console
+}
 \description{
 Throws an error in case errors have been passed to the function. Messages
 describing the detected errors are printed.

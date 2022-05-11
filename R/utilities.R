@@ -7,7 +7,6 @@ graph_metrics <- function(graph, verbose = TRUE, return = FALSE) {
     #' @param graph [igraph] iGraph object to analyze.
     #' @param verbose [bool] If TRUE graph information is printed.
     #' @param return [bool] If TRUE graph information is returned from function.
-    #' @export
     #'
     #' @examples
     #' adj_mat <- matrix(rnorm(36), nrow=6)
@@ -17,7 +16,8 @@ graph_metrics <- function(graph, verbose = TRUE, return = FALSE) {
     #'
     #' @return Named list of metrics including vertex count, edge count, number of components,
     #' size of largest component and the relative frequency of zero degree vertices.
-    
+    #' 
+    #' @export
 
     metrics <- list('n_vertices' = igraph::gorder(graph),
                     'n_edges' = igraph::ecount(graph),
@@ -44,6 +44,8 @@ set_cluster <- function(n_threads) {
     #'
     #' @param n_threads [int] Number of nodes in the cluster
     #'
+    #' @return No return value, called internally to create cluster
+    #' 
     #' @export
     
     parallel::setDefaultCluster(parallel::makeCluster(n_threads))
@@ -56,7 +58,9 @@ shutdown_cluster <- function() {
     #' computation to clean the state. If a cluster is registered, this functions 
     #' stops it and removes corresponding connections. Ignores errors. Has no effect 
     #' if no cluster is registered.
-    #'
+    #' 
+    #' @return No return value, called internally to shutdown cluster
+    #' 
     #' @export
     
     try(parallel::stopCluster(parallel::getDefaultCluster()), silent = TRUE)
@@ -74,6 +78,8 @@ install_python_dependencies <- function(package_manager="pip3") {
     #'
     #' @param package_manager [string] The package manager command or path to use (default: pip3)
     #'
+    #' @return No return value, called to install python dependencies
+    #' 
     #' @export
     
     if (grepl("pip", package_manager, fixed = TRUE)) {
@@ -94,7 +100,9 @@ get_layer <- function(name, layers) {
     #'
     #' @param name The layer to fetch
     #' @param layers A layers object \code{\link{layers_example}}
+    #' 
     #' @return Returns the layer along with layer names
+    #' 
     #' @export
     
     layer_names <- sapply(layers, function(l) l[['name']])

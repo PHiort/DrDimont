@@ -5,8 +5,8 @@
 \title{Create global settings variable for DrDimont pipeline}
 \usage{
 drdimont_settings(
-  saving_path = "./",
-  save_data = TRUE,
+  saving_path = "tempdir()",
+  save_data = FALSE,
   correlation_method = "spearman",
   handling_missing_data = "all.obs",
   reduction_method = "pickHardThreshold",

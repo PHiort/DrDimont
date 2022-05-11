@@ -6,7 +6,7 @@ check_layer <- function(layer) {
     #'
     #' @param layer [list] Named list of layer to check. Created by \code{\link[DrDimont]{make_layer}}
     #' @return Character string vector containing error messages.
-    #' @export
+    #' 
     #' @examples
     #' data(protein_data)
     #' protein_layer <- make_layer(
@@ -18,7 +18,8 @@ check_layer <- function(layer) {
     #'                      identifiers_groupB=data.frame(gene_name=protein_data$groupB$gene_name,
     #'                                                   ref_seq=protein_data$groupB$ref_seq))
     #' return_errors(check_layer(protein_layer))
-    #'
+    #' 
+    #' @export
     
     errors <- c()
     for (group in c("groupA", "groupB")) {
@@ -47,13 +48,14 @@ check_connection <- function(connection) {
     #'
     #' @param connection [list] Connection to check. Created by \code{\link[DrDimont]{make_connection}}
     #' @return Character string vector containing error messages.
-    #' @export
+    #' 
     #' @examples
     #' inter_layer_connections = make_connection("mrna", 
     #'                                           "protein", 
     #'                                           connect_on="gene_name")
     #' return_errors(check_connection(inter_layer_connections))
-    #'
+    #' 
+    #' @export
 
     errors <- c()
 
@@ -130,11 +132,10 @@ check_sensible_connections <- function(connection, layers) {
     #' \code{\link[DrDimont]{make_layer}} and need to be wrapped in a list.
     #'
     #' @return Character string vector containing error messages.
-    #' @export
+    #' 
     #' @examples
     #' data(mrna_data)
     #' data(protein_data)
-
     #' 
     #' mrna_layer <- make_layer(
     #'                     name="mrna",
@@ -159,6 +160,8 @@ check_sensible_connections <- function(connection, layers) {
     #'                                          layers=list(mrna_layer, 
     #'                                                      protein_layer)))
     #'
+    #' @export
+    
     errors <- c()
     layer_names <- c()
     for (layer in layers) {
@@ -217,16 +220,16 @@ check_drug_target <- function(drug_target_interactions) {
     #' @param drug_target_interactions [list] A named list of the drug interaction data. Created by
     #' \code{\link[DrDimont]{make_drug_target}}
     #'
-    #'@return Character string vector containing error messages.
-    #'@examples
-    #'data(drug_gene_interactions)
-    #'drug_target_interactions <- make_drug_target(
+    #' @return Character string vector containing error messages.
+    #' @examples
+    #' data(drug_gene_interactions)
+    #' drug_target_interactions <- make_drug_target(
     #'                                  target_molecules='protein',
     #'                                  interaction_table=drug_gene_interactions,
     #'                                  match_on='gene_name')
-    #'return_errors(check_drug_target(drug_target_interactions))
-    #'@export
-    #'
+    #' return_errors(check_drug_target(drug_target_interactions))
+    #' 
+    #' @export
 
     errors <- c()
     if(!drug_target_interactions$match_on %in% colnames(drug_target_interactions$interaction_table)) {
@@ -248,7 +251,7 @@ check_drug_targets_in_layers <- function(drug_target_interactions, layers) {
     #' \code{\link[DrDimont]{make_layer}} and need to be wrapped in a list.
     #'
     #' @return Character string vector containing error messages.
-    #' @export
+    #' 
     #' @examples
     #' data(layers_example)
     #' data(drug_gene_interactions)
@@ -257,7 +260,9 @@ check_drug_targets_in_layers <- function(drug_target_interactions, layers) {
     #'                                  interaction_table=drug_gene_interactions,
     #'                                  match_on='gene_name')
     #' return_errors(check_drug_targets_in_layers(drug_target_interactions, layers_example))
-    #'
+    #' 
+    #' @export
+    
     layer_names <- c()
     for (layer in layers) {
         layer_names <- c(layer_names, layer[['name']])
@@ -296,6 +301,7 @@ check_input <- function(layers, inter_layer_connections, drug_target_interaction
     #' \code{\link[DrDimont]{make_drug_target}}
     #'
     #' @return Character string vector containing error messages.
+    #' 
     #' @export
 
     errors <- c()
@@ -325,11 +331,14 @@ return_errors <- function(errors) {
     #' describing the detected errors are printed.
     #'
     #' @param errors [string] Character string vector containing error messages.
-    #' @export
+    #' 
+    #' @return No return value, writes error messages to console
+    #' 
     #' @examples
     #' layer <- DrDimont::layers_example[[2]]
     #' return_errors(check_layer(layer))
     #'
+    #' @export
 
     if (!is.null(errors)) {
         message(format(Sys.time(), "[%y-%m-%d %X] "), stringr::str_interp("\n ----- \n${length(errors)} Error(s) detected:\n ----- \n"))

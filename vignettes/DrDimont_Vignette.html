@@ -12,9 +12,9 @@
 
 <meta name="author" content="Katharina Baum, Pauline Hiort, Julian Hugo, Spoorthi Kashyap, Nataniel Mueller, and Justus Zeinert" />
 
-<meta name="date" content="2022-05-09" />
+<meta name="date" content="2022-05-11" />
 
-<title>DrDimont: A Pipeline for Drug Response Prediction from Differential Analysis of Multi-Omics Networks</title>
+<title>DrDimont: Drug Response Prediction from Differential Multi-Omics Networks</title>
 
 <script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
 
@@ -140,9 +140,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<h1 class="title toc-ignore">DrDimont: A Pipeline for Drug Response Prediction from Differential Analysis of Multi-Omics Networks</h1>
+<h1 class="title toc-ignore">DrDimont: Drug Response Prediction from Differential Multi-Omics Networks</h1>
 <h4 class="author">Katharina Baum, Pauline Hiort, Julian Hugo, Spoorthi Kashyap, Nataniel Mueller, and Justus Zeinert</h4>
-<h4 class="date">2022-05-09</h4>
+<h4 class="date">2022-05-11</h4>
 
 
 
@@ -272,8 +272,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data_groupB=</span><span class="fu">t</span>(mrna_data<span class="sc">$</span>groupB[,<span class="sc">-</span><span class="dv">1</span>]),</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">identifiers_groupA=</span><span class="fu">data.frame</span>(<span class="at">gene_name=</span>mrna_data<span class="sc">$</span>groupA<span class="sc">$</span>gene_name),</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">identifiers_groupB=</span><span class="fu">data.frame</span>(<span class="at">gene_name=</span>mrna_data<span class="sc">$</span>groupB<span class="sc">$</span>gene_name))</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:21] Layer mrna, groupA contains 78 samples and 50 genes/proteins/entities.</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:21] Layer mrna, groupB contains 34 samples and 50 genes/proteins/entities.</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer mrna, groupA contains 78 samples and 50 genes/proteins/entities.</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer mrna, groupB contains 34 samples and 50 genes/proteins/entities.</span></span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>protein_layer <span class="ot">&lt;-</span> <span class="fu">make_layer</span>(<span class="at">name=</span><span class="st">&quot;protein&quot;</span>,</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                            <span class="at">data_groupA=</span><span class="fu">t</span>(protein_data<span class="sc">$</span>groupA[, <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>)]),</span>
@@ -282,24 +282,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>                                                         <span class="at">ref_seq=</span>protein_data<span class="sc">$</span>groupA<span class="sc">$</span>ref_seq),</span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>                            <span class="at">identifiers_groupB=</span><span class="fu">data.frame</span>(<span class="at">gene_name=</span>protein_data<span class="sc">$</span>groupB<span class="sc">$</span>gene_name, </span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>                                                         <span class="at">ref_seq=</span>protein_data<span class="sc">$</span>groupB<span class="sc">$</span>ref_seq))</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:21] Layer protein, groupA contains 78 samples and 53 genes/proteins/entities.</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:21] Layer protein, groupB contains 34 samples and 53 genes/proteins/entities.</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer protein, groupA contains 78 samples and 53 genes/proteins/entities.</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer protein, groupB contains 34 samples and 53 genes/proteins/entities.</span></span>
 <span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>phosphosite_layer <span class="ot">&lt;-</span> <span class="fu">make_layer</span>(<span class="at">name=</span><span class="st">&quot;phosphosite&quot;</span>,</span>
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>                                <span class="at">data_groupA=</span><span class="fu">t</span>(phosphosite_data<span class="sc">$</span>groupA[, <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">3</span>)]),</span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>                                <span class="at">data_groupB=</span><span class="fu">t</span>(phosphosite_data<span class="sc">$</span>groupB[, <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">3</span>)]),</span>
 <span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>                                <span class="at">identifiers_groupA=</span><span class="fu">data.frame</span>(phosphosite_data<span class="sc">$</span>groupA[, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]),</span>
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>                                <span class="at">identifiers_groupB=</span><span class="fu">data.frame</span>(phosphosite_data<span class="sc">$</span>groupB[, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]))</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:21] Layer phosphosite, groupA contains 78 samples and 61 genes/proteins/entities.</span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:21] Layer phosphosite, groupB contains 34 samples and 65 genes/proteins/entities.</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer phosphosite, groupA contains 78 samples and 61 genes/proteins/entities.</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer phosphosite, groupB contains 34 samples and 65 genes/proteins/entities.</span></span>
 <span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>metabolite_layer <span class="ot">&lt;-</span> <span class="fu">make_layer</span>(<span class="at">name=</span><span class="st">&quot;metabolite&quot;</span>,</span>
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>                               <span class="at">data_groupA=</span><span class="fu">t</span>(metabolite_data<span class="sc">$</span>groupA[, <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">3</span>)]),</span>
 <span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>                               <span class="at">data_groupB=</span><span class="fu">t</span>(metabolite_data<span class="sc">$</span>groupB[, <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">3</span>)]),</span>
 <span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>                               <span class="at">identifiers_groupA=</span><span class="fu">data.frame</span>(metabolite_data<span class="sc">$</span>groupA[, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]),</span>
 <span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>                               <span class="at">identifiers_groupB=</span><span class="fu">data.frame</span>(metabolite_data<span class="sc">$</span>groupB[, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]))</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:21] Layer metabolite, groupA contains 33 samples and 50 genes/proteins/entities.</span></span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:21] Layer metabolite, groupB contains 34 samples and 49 genes/proteins/entities.</span></span></code></pre></div>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer metabolite, groupA contains 33 samples and 50 genes/proteins/entities.</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer metabolite, groupB contains 34 samples and 49 genes/proteins/entities.</span></span></code></pre></div>
 <p>Below we are creating a list of all individual layers for pipeline input:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>all_layers <span class="ot">&lt;-</span> <span class="fu">list</span>(mrna_layer, protein_layer, phosphosite_layer, metabolite_layer)</span></code></pre></div>
 </div>
@@ -353,14 +353,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h4>Check input data structures</h4>
 <p>When the input data structures of the individual layers, the inter-layer connections, and the drug target interactions are created they are checked automatically for validity. Additionally, the function below checks for a variety of possible input formatting errors and reports registered data set sizes (samples, entities) for the user to compare with the intended input.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">return_errors</span>(<span class="fu">check_input</span>(all_layers, all_inter_layer_connections, all_drug_target_interactions))</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:22] Layer mrna, groupA contains 78 samples and 50 genes/proteins/entities.</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:22] Layer mrna, groupB contains 34 samples and 50 genes/proteins/entities.</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:22] Layer protein, groupA contains 78 samples and 53 genes/proteins/entities.</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:22] Layer protein, groupB contains 34 samples and 53 genes/proteins/entities.</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:22] Layer phosphosite, groupA contains 78 samples and 61 genes/proteins/entities.</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:22] Layer phosphosite, groupB contains 34 samples and 65 genes/proteins/entities.</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:22] Layer metabolite, groupA contains 33 samples and 50 genes/proteins/entities.</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:22] Layer metabolite, groupB contains 34 samples and 49 genes/proteins/entities.</span></span></code></pre></div>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer mrna, groupA contains 78 samples and 50 genes/proteins/entities.</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer mrna, groupB contains 34 samples and 50 genes/proteins/entities.</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer protein, groupA contains 78 samples and 53 genes/proteins/entities.</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer protein, groupB contains 34 samples and 53 genes/proteins/entities.</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer phosphosite, groupA contains 78 samples and 61 genes/proteins/entities.</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer phosphosite, groupB contains 34 samples and 65 genes/proteins/entities.</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer metabolite, groupA contains 33 samples and 50 genes/proteins/entities.</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:02] Layer metabolite, groupB contains 34 samples and 49 genes/proteins/entities.</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -458,25 +458,25 @@ Calculate differential drug response score
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">annotations=</span>example_individual_graphs[[<span class="st">&quot;annotations&quot;</span>]], </span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">inter_layer_connections=</span>all_inter_layer_connections, </span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">settings=</span>example_settings)</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] Connecting mrna and protein by id.</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] groupA: Generating inter-layer edgelist...</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] done.</span></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] groupB: Generating inter-layer edgelist...</span></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] done.</span></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] Connecting protein and phosphosite by id.</span></span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] groupA: Generating inter-layer edgelist...</span></span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] done.</span></span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] groupB: Generating inter-layer edgelist...</span></span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] done.</span></span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] Connecting protein and metabolite by table.</span></span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] groupA: Generating inter-layer edgelist...</span></span>
-<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] done.</span></span>
-<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] groupB: Generating inter-layer edgelist...</span></span>
-<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] done.</span></span>
-<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] Combining graphs...</span></span>
-<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] groupA...</span></span>
-<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] groupB...</span></span>
-<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:27] groupB done.</span></span></code></pre></div>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] Connecting mrna and protein by id.</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] groupA: Generating inter-layer edgelist...</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] done.</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] groupB: Generating inter-layer edgelist...</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] done.</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] Connecting protein and phosphosite by id.</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] groupA: Generating inter-layer edgelist...</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] done.</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] groupB: Generating inter-layer edgelist...</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] done.</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] Connecting protein and metabolite by table.</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] groupA: Generating inter-layer edgelist...</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] done.</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] groupB: Generating inter-layer edgelist...</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] done.</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] Combining graphs...</span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] groupA...</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] groupB...</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] groupB done.</span></span></code></pre></div>
 <p>The resulting data structure <code>example_combined_graphs</code> is a nested named list with 2 levels containing the combined graphs and a combined annotation data frame. The element <code>graphs</code> contains the two groups on the second level with the combined graphs as iGraphs objects. The <code>annotations</code> element consists of a data frame on the second level named <code>both</code> which contains the mapping of the identifier data frames of the individual layers to the layer specific node IDs for all layers together.</p>
 <p>For example:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data inspection</span></span>
@@ -498,10 +498,10 @@ Calculate differential drug response score
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">annotations=</span>example_combined_graphs[[<span class="st">&quot;annotations&quot;</span>]], </span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">drug_target_interactions=</span>all_drug_target_interactions, </span>
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">settings=</span>example_settings)</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:28] Determining drug targets...</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:28] 53 drug targets found.</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:28] 261 drugs with targets found.</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:28] done.</span></span></code></pre></div>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] Determining drug targets...</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] 53 drug targets found.</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] 261 drugs with targets found.</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] done.</span></span></code></pre></div>
 <p>The resulting data structure <code>example_drug_target_edges</code> is a nested named list with 2 levels. The first level consists of the elements <code>targets</code> and <code>edgelists</code>. The element <code>targets</code> contains the data frame <code>target_nodes</code> and the dictionary-like list <code>drugs_to_target_nodes</code>. The data frame <code>target_nodes</code> contains the node IDs of the nodes that are drug targets and TRUE/FALSE values if they are present in the graph of each group. The list <code>drugs_to_target_nodes</code> maps the drugs to the node IDs of their targets. The element <code>edgelists</code> consists of a data frame for each of the groups (<code>groupA</code> and <code>groupB</code>) which, respectively, contain the incident edges of the drug targets and their weights (columns <code>from</code>, <code>to</code> and <code>weight</code>).</p>
 </div>
 <div id="step-5-calculate-integrated-interaction-score" class="section level3">
@@ -522,8 +522,8 @@ Calculate differential drug response score
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>example_differential_graph <span class="ot">&lt;-</span> <span class="fu">generate_differential_score_graph</span>(</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">interaction_score_graphs=</span>interaction_score_graphs_example, </span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">settings=</span>example_settings)</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:28] Computing differential networks...</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:28] done.</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] Computing differential networks...</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] done.</span></span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co">#if interaction score graphs were computed use the following:</span></span>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co">#example_differential_score_graph &lt;- generate_differential_score_graph(</span></span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co">#                                           interaction_score_graphs=example_interaction_score_graphs, </span></span>
@@ -536,8 +536,8 @@ Calculate differential drug response score
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">differential_graph=</span>example_differential_graph,</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">drug_targets=</span>example_drug_target_edges[[<span class="st">&quot;targets&quot;</span>]],</span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">settings=</span>example_settings)</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:28] Computing drug response scores based on the mean of the differential scores ...</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-09 12:58:28] done.</span></span></code></pre></div>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] Computing drug response scores based on the mean of the differential scores ...</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-05-11 17:46:09] done.</span></span></code></pre></div>
 <p>The first few lines of the resulting data frame are shown below. The data frame is saved as <code>drug_response_score.tsv</code> in the specified output folder (see above). The drug response score is an indirect measure of how the strength of connectivity differs between the groups for the drug targets of the particular drug.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dplyr<span class="sc">::</span><span class="fu">filter</span>(example_drug_response_scores, <span class="sc">!</span><span class="fu">is.na</span>(drug_response_score)))</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                     drug_name drug_response_score</span></span>
