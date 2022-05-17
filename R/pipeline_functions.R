@@ -300,21 +300,18 @@ compute_correlation_matrices <- function(layers, settings) {
     #' \dontshow{
     #' WGCNA::disableWGCNAThreads()
     #' }
-    #'
     #' data(layers_example)
     #'
     #' example_settings <- drdimont_settings(
     #'                        handling_missing_data=list(
     #'                               default="pairwise.complete.obs",
     #'                               mrna="all.obs"),
-    #'                        reduction_method="pickHardThreshold",
-    #'                        save_data=FALSE,
-    #'                        python_executable="python")
-    #' \donttest{
+    #'                        save_data=FALSE)
+    #' 
     #' correlation_matrices <- compute_correlation_matrices(
-    #'                              layers=layers_example, 
+    #'                              layers=layers_example[c(1)], 
     #'                              settings=example_settings)
-    #' }
+    #'
     #'
 
     ### empty list to store correlation matrices of individual layers
