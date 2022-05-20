@@ -51,11 +51,6 @@ Alternatively the Python dependencies can be installed manually using the `DrDim
 
 The following exemplary pipeline application showcases the usage of molecular breast cancer data with ER+ (Estrogen receptor-positive) patient samples as group A and ER- (Estrogen receptor-negative) as group B. A reduced exemplary data set is included within the package.
 
-![Pipeline Overview](pipeline_overview.png){width=100%}
-[image created with biorender.com]
-
-
-
 The breast cancer data by Krug et al. (2020) used for this tutorial is already preprocessed and only includes samples with tumor purity > 0.5 and known ER status. Metabolite data was sampled randomly to generate distributions similar to those reported, e.g., in Terunuma et al. (2014). Krug et al. (2020) published data from the Clinical Proteomic Tumor Analysis Consortium (CPTAC).
 
 The data set contains observations from:
@@ -267,12 +262,9 @@ The pipeline can also be used in a modular fashion. The modules then refer to th
 <li>Calculate differential drug response score</li>
 </ol>
 
-![Pipeline BPMN.](pipeline_bpmn.png){width=100%}
-[image created with biorender.com]
-
 ### Step 1: Compute correlation matrices
 
-In step one, correlation matrices are computed for the specified layers described above. `spearman` (default), `pearson`, and `kendall` can be chosen as correlation methods by setting the parameter `reduction_method` in `drdimont_settings()`. The list of layers and the settings list are passed to `compute_correlation_matrices()`. To reduce run time this example will  only analyze the first 10 genes and patients of the mRNA layer (set `layers=all_layers` in `compute_correlation_matrices()` to compute all layers):
+In step one, correlation matrices are computed for the specified layers described above. `spearman` (default), `pearson`, and `kendall` can be chosen as correlation methods by setting the parameter `reduction_method` in `drdimont_settings()`. The list of layers and the settings list are passed to `compute_correlation_matrices()`. To reduce run time this example will only analyze the first 10 genes and patients of the mRNA layer (set `layers=all_layers` in `compute_correlation_matrices()` to compute all layers):
 
 ```{r Correlation matrices, message=FALSE, results='hide'}
 reduced_mrna_layer <- make_layer(name="mrna",
