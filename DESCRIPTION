@@ -1,7 +1,7 @@
 Package: DrDimont
 Type: Package
 Title: Drug Response Prediction from Differential Multi-Omics Networks
-Version: 0.1.2
+Version: 0.1.3
 Authors@R: c(
   person("Katharina", "Baum", , "katharina.baum@hpi.de", role = "cre",
          comment = c(ORCID = "0000-0001-7256-0566")),
