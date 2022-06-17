@@ -5,6 +5,7 @@ knitr::opts_chunk$set(
 )
 
 ## ----setup, message=FALSE-----------------------------------------------------
+install.packages('DrDimont')
 library(DrDimont)
 
 ## ---- echo=TRUE, warning=FALSE, eval=FALSE------------------------------------
@@ -12,6 +13,12 @@ library(DrDimont)
 
 ## ---- echo=TRUE, warning=FALSE, eval=FALSE------------------------------------
 #  install_python_dependencies(package_manager="conda")
+
+## ---- echo=TRUE, warning=FALSE, eval=FALSE------------------------------------
+#  conda install -c conda-forge --file requirements_conda.txt
+
+## ---- echo=TRUE, warning=FALSE, eval=FALSE------------------------------------
+#  pip install -r requirements_pip.txt
 
 ## ----Load data----------------------------------------------------------------
 data("mrna_data")
@@ -161,7 +168,7 @@ example_drug_target_edges <- determine_drug_targets(
 ## ----Calculate interaction score, eval=FALSE----------------------------------
 #  example_interaction_score_graphs <- generate_interaction_score_graphs(
 #                                              graphs=example_combined_graphs[["graphs"]],
-#                                              drug_target_edgelists=drug_targets[["edgelists"]],
+#                                              drug_target_edgelists=example_drug_target_edges[["edgelists"]],
 #                                              settings=example_settings)
 
 ## ----Calculate differential score---------------------------------------------

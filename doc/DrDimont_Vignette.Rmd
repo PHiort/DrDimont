@@ -21,12 +21,18 @@ knitr::opts_chunk$set(
 
 The main purpose of the pipeline is to easily and efficiently generate, reduce, and combine molecular networks from two groups or conditions (e.g., of patients) to compute a differential drug interaction score based on drug targets. This allows for improved predictions of the effect of drugs (e.g., for cancer) on two groups with different characteristics. 
 
+![DrDimont Pipeline Overview](220401_overview.png){width=80%}
+
+(Figure adapted from Figure 1A from Hiort et al. (2022))
+
+
 ## Installation
 
-The R package `DrDimont` can be installed via CRAN or with `remotes::install_gitlab("PHiort/DrDimont")`. The requirements of the package will be installed when installing the package. The complete source code can be accessed through https://gitlab.com/PHiort/DrDimont.
+The R package `DrDimont` can be installed via CRAN. The requirements of the package will be installed when installing the package. The complete source code can be accessed through https://gitlab.com/PHiort/DrDimont.
 
 After installation, load the package into your session with:
 ```{r setup, message=FALSE}
+install.packages('DrDimont')
 library(DrDimont)
 ```
 
@@ -42,10 +48,18 @@ or conda:
 ```{r, echo=TRUE, warning=FALSE, eval=FALSE}
 install_python_dependencies(package_manager="conda")
 ```
-With conda the python libraries will be installed in the base environment or in the currently active environment if run via command line.
+Using conda the python libraries will be installed in the base environment or in the currently active environment if run via command line. If the installation does not work with DrDimont's internal function please refer to a manual installation of the libraries with conda.
 
-Alternatively the Python dependencies can be installed manually using the `DrDimont/inst/requirements_pip.txt` or the `DrDimont/inst/requirements_conda.txt` file.
-
+Alternatively the Python dependencies can be installed manually using the `requirements_pip.txt` or the `requirements_conda.txt` file. 
+Note: For conda use:
+```{r, echo=TRUE, warning=FALSE, eval=FALSE}
+conda install -c conda-forge --file requirements_conda.txt
+```
+to install the python packages in your active environment. For pip use :
+```{r, echo=TRUE, warning=FALSE, eval=FALSE}
+pip install -r requirements_pip.txt
+```
+You can download the text files from gitlab in the `inst/` directory or find them in your R package directory folder in the `DrDimont/` folder.
 
 ## Example Data Set Description
 
@@ -351,7 +365,7 @@ The Python script for integrated interaction score computation is parallelized u
 ```{r Calculate interaction score, eval=FALSE}
 example_interaction_score_graphs <- generate_interaction_score_graphs(
                                             graphs=example_combined_graphs[["graphs"]], 
-                                            drug_target_edgelists=drug_targets[["edgelists"]], 
+                                            drug_target_edgelists=example_drug_target_edges[["edgelists"]], 
                                             settings=example_settings)
 ```
 
@@ -398,5 +412,9 @@ Krug et. al (2020):
 Terunuma et al.(2014):
 
 * Terunuma, Atsushi et al. “MYC-driven accumulation of 2-hydroxyglutarate is associated with breast cancer prognosis.” The Journal of clinical investigation vol. 124,1 (2014): 398-412. https://www.doi.org/10.1172/JCI71180
+
+Hiort et al. (2022):
+
+* Hiort, Pauline et al. “DrDimont: Explainable drug response prediction from differential analysis of multi-omics networks.” bioRxiv 2022.05.31.493964. https://doi.org/10.1101/2022.05.31.493964
 
 The package `DrDimont` is an updated version of the previously published `molnet` package (https://github.com/molnet-org/molnet; https://CRAN.R-project.org/package=molnet)
