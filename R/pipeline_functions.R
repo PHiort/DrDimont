@@ -804,18 +804,22 @@ generate_interaction_score_graphs <- function(graphs, drug_target_edgelists, set
     #' 
     #' @export
 
+
+    ### write files for python into savings_path from settings
+    message(format(Sys.time(), "[%y-%m-%d %X] "), "Writing data...")
+    write_interaction_score_input(graphs, drug_target_edgelists, settings$saving_path)
+    message(format(Sys.time(), "[%y-%m-%d %X] "), "done.")
+
+    ### get total number of edges and remove unneeded data
+    total_edges <- sapply(graphs, igraph::ecount)
+    
+    graphB_null <- is.null(graphs$groupB)
+    rm(graphs)
+    rm(drug_target_edgelists)
+    gc()
+
+    ### run the python script for interaction score calculation
     tryCatch({
-        total_edges <- sapply(graphs, igraph::ecount)
-
-        message(format(Sys.time(), "[%y-%m-%d %X] "), "Writing data...")
-        write_interaction_score_input(graphs, drug_target_edgelists, settings$saving_path)
-
-        graphB_null <- is.null(graphs$groupB)
-        rm(graphs)
-        rm(drug_target_edgelists)
-        gc()
-
-        message(format(Sys.time(), "[%y-%m-%d %X] "), "done.")
         message(format(Sys.time(), "[%y-%m-%d %X] "), "Running python script for interaction score computation.")
         calculate_interaction_score(settings$max_path_length, total_edges, settings$saving_path,
                                     settings$conda, settings$python_executable, settings$script_path,
