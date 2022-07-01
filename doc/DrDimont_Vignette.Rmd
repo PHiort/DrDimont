@@ -13,8 +13,8 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+    collapse = TRUE,
+    comment = "#>"
 )
 ```
 ## Introduction
@@ -30,14 +30,19 @@ The main purpose of the pipeline is to easily and efficiently generate, reduce, 
 
 The R package `DrDimont` can be installed via CRAN. The requirements of the package will be installed when installing the package. The complete source code can be accessed through https://gitlab.com/PHiort/DrDimont.
 
-After installation, load the package into your session with:
-```{r setup, message=FALSE}
+Install the R package with:
+```{r setup1, message=FALSE, warning=FALSE, eval=FALSE}
 install.packages('DrDimont')
+```
+
+
+After installation, load the package into your session with:
+```{r setup2, message=FALSE}
 library(DrDimont)
 ```
 
 ### Installation of Python dependencies
-The pipeline uses a Python script for an intermediate step. For differential drug response score computation, Python (>= 3.8) needs to be installed on the system. The `install_python_dependencies()` function of DrDimont can be used to install the Python dependencies. Depending on which Python package manager is installed on your system, the dependencies can be installed using pip (default):
+The pipeline uses a Python script for an intermediate step. For differential drug response score computation, Python (3.8 or 3.9) needs to be installed on the system. The `install_python_dependencies()` function of DrDimont can be used to install the Python dependencies. The Python packages will be installed in a virtual python or conda environment called 'r-DrDimont'. Depending on which Python package manager is installed on your system, the dependencies can be installed using pip (default):
 
 ```{r, echo=TRUE, warning=FALSE, eval=FALSE}
 install_python_dependencies(package_manager="pip")
@@ -48,15 +53,16 @@ or conda:
 ```{r, echo=TRUE, warning=FALSE, eval=FALSE}
 install_python_dependencies(package_manager="conda")
 ```
-Using conda the python libraries will be installed in the base environment or in the currently active environment if run via command line. If the installation does not work with DrDimont's internal function please refer to a manual installation of the libraries with conda.
+<b> ATTENTION </b>: When using pip Python version 3.8 or 3.9 must be installed on the system (currently one of the Python dependencies ('ray') only work with Python <= 3.9). When using conda Python 3.9 will be automatically installed in the conda environment. If the installation does not work with DrDimont's internal function please refer to a manual installation of the libraries with conda.
 
-Alternatively the Python dependencies can be installed manually using the `requirements_pip.txt` or the `requirements_conda.txt` file. 
-Note: For conda use:
-```{r, echo=TRUE, warning=FALSE, eval=FALSE}
+Alternatively the Python dependencies can be installed manually using the `requirements_pip.txt` or the `requirements_conda.txt` file. <b> ATTENTION </b>: Please install the python dependencies into a virtual or conda environment with the name `r-DrDimont` otherwise the execution of the Python script will not work. 
+
+For conda use:
+```{bash, echo=TRUE, warning=FALSE, eval=FALSE}
 conda install -c conda-forge --file requirements_conda.txt
 ```
-to install the python packages in your active environment. For pip use :
-```{r, echo=TRUE, warning=FALSE, eval=FALSE}
+to install the python packages in your `r-DrDimont` environment. For pip use :
+```{bash, echo=TRUE, warning=FALSE, eval=FALSE}
 pip install -r requirements_pip.txt
 ```
 You can download the text files from gitlab in the `inst/` directory or find them in your R package directory folder in the `DrDimont/` folder.
@@ -131,9 +137,9 @@ protein_layer <- make_layer(name="protein",
                             data_groupA=t(protein_data$groupA[, c(-1,-2)]),
                             data_groupB=t(protein_data$groupB[, c(-1,-2)]),
                             identifiers_groupA=data.frame(gene_name=protein_data$groupA$gene_name, 
-                                                         ref_seq=protein_data$groupA$ref_seq),
+                                ref_seq=protein_data$groupA$ref_seq),
                             identifiers_groupB=data.frame(gene_name=protein_data$groupB$gene_name, 
-                                                         ref_seq=protein_data$groupB$ref_seq))
+                                ref_seq=protein_data$groupB$ref_seq))
 
 phosphosite_layer <- make_layer(name="phosphosite",
                                 data_groupA=t(phosphosite_data$groupA[, c(-1,-2, -3)]),
@@ -194,7 +200,7 @@ all_inter_layer_connections = list(
     make_connection(from='mrna', to='protein', connect_on='gene_name', weight=1),
     make_connection(from='protein', to='phosphosite', connect_on='gene_name', weight=1),
     make_connection(from='protein', to='metabolite', 
-                    connect_on=metabolite_protein_interactions, weight='combined_score')
+        connect_on=metabolite_protein_interactions, weight='combined_score')
 )
 ```
 
@@ -212,16 +218,18 @@ The function `make_drug_target()` generates the required format of the drug-targ
 
 ```{r Make drug-target interaction}
 all_drug_target_interactions <- make_drug_target(
-                                        target_molecules='protein',
-                                        interaction_table=drug_gene_interactions,
-                                        match_on='gene_name')
+                                    target_molecules='protein',
+                                    interaction_table=drug_gene_interactions,
+                                    match_on='gene_name')
 ```
 
 #### Check input data structures
-When the input data structures of the individual layers, the inter-layer connections, and the drug target interactions are created they are checked automatically for validity. Additionally, the function below checks for a variety of possible input formatting errors and reports registered data set sizes (samples, entities) for the user to compare with the intended input.
+When the input data structures of the individual layers, the inter-layer connections, and the drug target interactions are created they are checked automatically for validity. Additionally, the function below checks for a variety of possible input formatting and connection errors and reports registered data set sizes (samples, entities) for the user to compare with the intended input.
 
 ```{r}
-return_errors(check_input(all_layers, all_inter_layer_connections, all_drug_target_interactions))
+return_errors(check_input(layers=all_layers, 
+                          inter_layer_connections=all_inter_layer_connections, 
+                          drug_target_interactions=all_drug_target_interactions))
 ```
 
 
@@ -229,23 +237,24 @@ return_errors(check_input(all_layers, all_inter_layer_connections, all_drug_targ
 
 The pipeline can be run entirely or in individual steps. To set global pipeline options a settings list needs to be created using the `drdimont_settings()` function. This function contains default parameters that can be modified as shown below. For a detailed explanation of all possible settings and parameters please refer to the function documentation by calling `?drdimont_settings()`.
 
-Please be aware of the python script used in one of the pipeline steps (see Requirements above). If you have installed python and the required packages via pip then you should set the `drdimont_settings()` parameter `python_executable="python"` or `python_executable="python3"` depending on your installed python version. If you have installed python and the required packages manually in a custom conda environment then set the `drdimont_settings()` parameters `conda=TRUE` and `python_executable="-n name-of-your-environment python"`. If you are using the conda base environment then you can set `python_executable="python"`.
+Please be aware of the Python script used in one of the pipeline steps (see Requirements above). If you have installed python and the required packages via pip then you should set the `drdimont_settings()` parameter `conda=FALSE"`. If you have installed python and the required packages via conda then set the `drdimont_settings()` parameters `conda=TRUE`. `drdimont_settings()` will automatically check if Python can be found and show a warning if it was not found.
 
-The intermediate pipeline and drug response scores output (parameter `save_data`) is deactivated for this example (see below) but especially for large data files consider turning it on (the default). You can specify the output location of files with the `saving_path` parameter. If not specified all files will be written to the current working directory. For the this example, the data will be saved in a temporary directory. If you want to save the data elsewhere you need to change the parameter `saving_path` below. The intermediate output data includes RData-files of the correlation matrices, the individual graphs, the combined graphs, the drug target edges, the interaction score graphs, and the differential score graph. The drug response scores are saved in a tsv-file in the specified output directory if `save_data=TRUE`.
+The intermediate pipeline and drug response scores output (parameter `save_data`) is deactivated for this example (see below) but especially for large data files consider turning it on (the default). You can specify the output location of files with the `saving_path` parameter. If not specified all files will be written to a temporary file created by R. For this example, the data will be saved in a temporary directory. If you want to save the data elsewhere you need to change the parameter `saving_path` below. The intermediate output data includes RData-files of the correlation matrices, the individual graphs, the combined graphs, the drug target edges, the interaction score graphs, and the differential score graph. The drug response scores are saved in a tsv-file in the specified output directory if `save_data=TRUE`.
 
-The settings list for the example (call `?drdimont_settings()` for further information on the parameters):
+See <b>Running the individual pipeline steps</b> and call `?drdimont_settings()` for further explanations of settings parameters.
+
+The settings list for the example:
 ```{r Settings}
 example_settings <- drdimont_settings(
-                            handling_missing_data = list(
-                                default = "pairwise.complete.obs",
-                                mrna = "all.obs"
-                            ),
-                            reduction_method = "pickHardThreshold",
-                            r_squared=list(default=0.65, metabolite=0.1),
-                            cut_vector=list(default=seq(0.2, 0.65, 0.01)),
-                            save_data = FALSE,
-                            python_executable = "python3",
-                            saving_path = tempdir())
+                        handling_missing_data = list(
+                            default = "pairwise.complete.obs",
+                            mrna = "all.obs"),
+                        reduction_method = "pickHardThreshold",
+                        r_squared=list(default=0.65, metabolite=0.1),
+                        cut_vector=list(default=seq(0.2, 0.65, 0.01)),
+                        conda=FALSE,
+                        save_data = FALSE,
+                        saving_path = tempdir())
 # disable multi-threading for example run; 
 # not recommended for actual data processing
 WGCNA::disableWGCNAThreads()
@@ -282,14 +291,14 @@ In step one, correlation matrices are computed for the specified layers describe
 
 ```{r Correlation matrices, message=FALSE, results='hide'}
 reduced_mrna_layer <- make_layer(name="mrna",
-                           data_groupA=t(mrna_data$groupA[1:10,2:11]),
-                           data_groupB=t(mrna_data$groupB[1:10,2:11]),
-                           identifiers_groupA=data.frame(gene_name=mrna_data$groupA$gene_name[1:10]),
-                           identifiers_groupB=data.frame(gene_name=mrna_data$groupB$gene_name[1:10]))
+                          data_groupA=t(mrna_data$groupA[1:10,2:11]),
+                          data_groupB=t(mrna_data$groupB[1:10,2:11]),
+                          identifiers_groupA=data.frame(gene_name=mrna_data$groupA$gene_name[1:10]),
+                          identifiers_groupB=data.frame(gene_name=mrna_data$groupB$gene_name[1:10]))
 
 example_correlation_matrices <- compute_correlation_matrices(
-                                            layers=list(reduced_mrna_layer), 
-                                            settings=example_settings)
+                                    layers=list(reduced_mrna_layer), 
+                                    settings=example_settings)
 ```
 
 The resulting data structure `example_correlation_matrices` is a nested named list with 3 levels containing the correlation matrices and annotation data frames. The first level are `correlation_matrices` and `annotations`. The correlation matrices are separated on the second level by group (`groupA` and `groupB`) and on the third level by layer name (e.g., `mrna`, `protein`, etc.). The annotations element contains annotations for each groups and both combined at the second level (`groupA`, `groupB`, and`both`). The third level consist of named data frames, for each layers one data frame, which contain the pipeline-internal mapping of the identifier data frames of the individual layers to layer specific node IDs.
@@ -308,9 +317,9 @@ Next, the individual graphs are generated. In this step edge weights are establi
 ```{r Individual graphs, message=FALSE, results='hide'}
 data("correlation_matrices_example")
 example_individual_graphs <- generate_individual_graphs(
-                                        correlation_matrices=correlation_matrices_example, 
-                                        layers=all_layers, 
-                                        settings=example_settings)
+                                 correlation_matrices=correlation_matrices_example, 
+                                 layers=all_layers, 
+                                 settings=example_settings)
 ```
 
 The resulting data structure `example_individual_graphs` is a nested named list with 3 levels containing the graphs and annotation data frames. The element `graphs` contains, similar to the correlation matrices, the two groups on the second level and the graphs as iGraphs objects for each molecular layer on the third level. The `annotations` element is a copy from the `annotations` element of the `example_correlation_matrices` data (see Step 1).
@@ -322,10 +331,10 @@ In this step, the individual graphs are combined to a single combined graph per 
 
 ```{r Combine graphs}
 example_combined_graphs <- generate_combined_graphs(
-                                    graphs=example_individual_graphs[["graphs"]], 
-                                    annotations=example_individual_graphs[["annotations"]], 
-                                    inter_layer_connections=all_inter_layer_connections, 
-                                    settings=example_settings)
+                               graphs=example_individual_graphs[["graphs"]], 
+                               annotations=example_individual_graphs[["annotations"]], 
+                               inter_layer_connections=all_inter_layer_connections, 
+                               settings=example_settings)
 ```
 
 The resulting data structure `example_combined_graphs` is a nested named list with 2 levels containing the combined graphs and a combined annotation data frame. The element `graphs` contains the two groups on the second level with the combined graphs as iGraphs objects. The `annotations` element consists of a data frame on the second level named `both` which contains the mapping of the identifier data frames of the individual layers to the layer specific node IDs for all layers together.
@@ -343,10 +352,10 @@ Next, in order to extract the list of relevant drugs the drug targets are identi
 
 ```{r Drug targets and their edges}
 example_drug_target_edges <- determine_drug_targets(
-                                        graphs=example_combined_graphs[["graphs"]], 
-                                        annotations=example_combined_graphs[["annotations"]], 
-                                        drug_target_interactions=all_drug_target_interactions, 
-                                        settings=example_settings)
+                                 graphs=example_combined_graphs[["graphs"]], 
+                                 annotations=example_combined_graphs[["annotations"]], 
+                                 drug_target_interactions=all_drug_target_interactions, 
+                                 settings=example_settings)
 ```
 
 The resulting data structure `example_drug_target_edges` is a nested named list with 2 levels. The first level consists of the elements `targets` and `edgelists`. The element `targets` contains the data frame `target_nodes` and the dictionary-like list `drugs_to_target_nodes`. The data frame `target_nodes` contains the node IDs of the nodes that are drug targets and TRUE/FALSE values if they are present in the graph of each group. The list `drugs_to_target_nodes` maps the drugs to the node IDs of their targets. The element `edgelists` consists of a data frame for each of the groups (`groupA` and `groupB`) which, respectively, contain the incident edges of the drug targets and their weights (columns `from`, `to` and `weight`).
@@ -355,18 +364,18 @@ The resulting data structure `example_drug_target_edges` is a nested named list 
 
 In this step, the combined graphs for each group together with the edge list from `drug_target_edges` are used to calculate the integrated interaction scores for all edges incident to drug targets. The pipeline uses a Python script to compute the integrated interaction scores in the function `generate_interaction_score_graphs()`. The input data for the Python script (combined graphs for both groups in gml format and relevant edges lists for both groups in tsv format) are written to disk and the script is called to calculate the scores. Output files written by the Python script are two graphs in gml format containing the interaction score as an additional edge attribute called `interactionweight`. These are then loaded into R and returned in a named list containing the graphs for `groupA` and `groupB`, respectively.
 
-<b> Attention </b>: Data exchange via files is mandatory and can take long for large data. Additionally, the interaction score computation can be slow. Therefore, do not set `max_path_length` in `drdimont_settings()` to a large value (default: 3). If `max_path_length=1` then the integrated interaction scores will be the same as the correlation-based edge weights. 
+<b> ATTENTION </b>: Data exchange via files is mandatory and can take long for large data. Additionally, the interaction score computation can be slow. Therefore, do not set `max_path_length` in `drdimont_settings()` to a large value (default: 3). If `max_path_length=1` then the integrated interaction scores will be the same as the correlation-based edge weights. 
 
-The Python script for integrated interaction score computation is parallelized using ray (https://www.ray.io/). Refer to the Ray documentation if you encounter problems with running the python script in parallel. Use the setting `int_score_mode="sequential"` in `drdimont_settings()` for forced sequential computation or `int_score_mode="ray"` for parallel computation otherwise one of the two will be automatically chosen based on the size of the data.
+The Python script for integrated interaction score computation is parallelized using ray (https://www.ray.io/). Refer to the Ray documentation if you encounter problems with running the Python script in parallel. Use the setting `int_score_mode="sequential"` in `drdimont_settings()` for forced sequential computation or `int_score_mode="ray"` for parallel computation otherwise one of the two will be automatically chosen based on the size of the data.
 
 <b> Running Ray on a compute cluster </b>: If you want to run DrDimont on a cluster, run `ray start --head --num-cpus 12` (change number of CPUs as fit) on the command line, before starting the R session.
 
 
 ```{r Calculate interaction score, eval=FALSE}
 example_interaction_score_graphs <- generate_interaction_score_graphs(
-                                            graphs=example_combined_graphs[["graphs"]], 
-                                            drug_target_edgelists=example_drug_target_edges[["edgelists"]], 
-                                            settings=example_settings)
+                                        graphs=example_combined_graphs[["graphs"]], 
+                                        drug_target_edgelists=example_drug_target_edges[["edgelists"]], 
+                                        settings=example_settings)
 ```
 
 
@@ -377,12 +386,13 @@ To generate a differential graph, the difference of the interaction scores betwe
 ```{r Calculate differential score}
 data("interaction_score_graphs_example")
 example_differential_graph <- generate_differential_score_graph(
-                                            interaction_score_graphs=interaction_score_graphs_example, 
-                                            settings=example_settings)
-#if interaction score graphs were computed use the following:
+                                  interaction_score_graphs=interaction_score_graphs_example, 
+                                  settings=example_settings)
+
+# if interaction score graphs were computed use the following:
 #example_differential_score_graph <- generate_differential_score_graph(
-#                                           interaction_score_graphs=example_interaction_score_graphs, 
-#                                           settings=example_settings)
+#                                        interaction_score_graphs=example_interaction_score_graphs, 
+#                                        settings=example_settings)
 ```
 
 ### Step 7: Calculate differential drug response score
@@ -391,9 +401,9 @@ In the last step, the differential drug response score is calculated based on th
 
 ```{r Drug response}
 example_drug_response_scores <- compute_drug_response_scores(
-                                                     differential_graph=example_differential_graph,
-                                                     drug_targets=example_drug_target_edges[["targets"]],
-                                                     settings=example_settings)
+                                    differential_graph=example_differential_graph,
+                                    drug_targets=example_drug_target_edges[["targets"]],
+                                    settings=example_settings)
 ```
 
 The first few lines of the resulting data frame are shown below. The data frame is saved as `drug_response_score.tsv` in the specified output folder (see above). The drug response score is an indirect measure of how the strength of connectivity differs between the groups for the drug targets of the particular drug.
