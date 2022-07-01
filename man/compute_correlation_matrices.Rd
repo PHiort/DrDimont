@@ -31,20 +31,30 @@ layers and the mapping table is returned as `annotations`.
 \dontshow{
 WGCNA::disableWGCNAThreads()
 }
-
 data(layers_example)
 
 example_settings <- drdimont_settings(
-                       handling_missing_data=list(
-                              default="pairwise.complete.obs",
-                              mrna="all.obs"),
-                       reduction_method="pickHardThreshold",
-                       save_data=FALSE,
-                       python_executable="python")
+                        handling_missing_data=list(
+                            default="pairwise.complete.obs",
+                            mrna="all.obs"))
+
+# example with reduced mRNA layer for runtime reasons:
+data(mrna_data)
+reduced_mrna_layer <- make_layer(name="mrna",
+                          data_groupA=t(mrna_data$groupA[1:10,2:11]),
+                          data_groupB=t(mrna_data$groupB[1:10,2:11]),
+                          identifiers_groupA=data.frame(gene_name=mrna_data$groupA$gene_name[1:10]),
+                          identifiers_groupB=data.frame(gene_name=mrna_data$groupB$gene_name[1:10]))
+
+example_correlation_matrices <- compute_correlation_matrices(
+                                    layers=list(reduced_mrna_layer), 
+                                    settings=example_settings)
+
+# to run all layers use:
 \donttest{
-correlation_matrices <- compute_correlation_matrices(
-                             layers=layers_example, 
-                             settings=example_settings)
+example_correlation_matrices <- compute_correlation_matrices(
+                                    layers=layers_example, 
+                                    settings=example_settings)
 }
 
 }

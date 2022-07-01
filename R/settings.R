@@ -1,6 +1,6 @@
 drdimont_settings <- function(
                         ### saving
-                        saving_path = 'tempdir()',
+                        saving_path = tempdir(),
                         save_data = FALSE,
                         ### network generation
                         correlation_method = "spearman",
@@ -19,7 +19,6 @@ drdimont_settings <- function(
                         parallel_chunk_size = 10^6,
                         print_graph_info = TRUE,
                         ### interaction_score
-                        python_executable = "python",
                         conda = FALSE,
                         max_path_length = 3,
                         int_score_mode = "auto",
@@ -88,11 +87,8 @@ drdimont_settings <- function(
     #' @param parallel_chunk_size p_value setting: [int] Number of p-values in smallest work unit when computing in parallel
     #' during network reduction with method `p_value`. (default: 10^6)
     #'
-    #' @param python_executable [string] Path to Python executable used for generating the interaction score graphs.
-    #' (default: "python")
     #' @param conda [bool] Specifying if python is installed in a conda environment. Set TRUE if python is installed
-    #' with conda. Use \code{python_executable="-n name-of-your-environment python"} (change name-of-your-environment to
-    #' your environment) or \code{python_executable="python"} if installed in base environment. (default: FALSE)
+    #' with conda. (default: FALSE)
     #' @param max_path_length [int] Integer of maximum length of simple paths to include in the
     #' \code{\link[DrDimont]{generate_interaction_score_graphs}} computation. (default: 3)
     #' @param int_score_mode ["auto"|"sequential"|"ray"] Whether to compute interaction
@@ -100,11 +96,11 @@ drdimont_settings <- function(
     #' graph sizes. (default: "auto")
     #' @param cluster_address [string] Local node IP-address of Ray if executed on a cluster.
     #' On a cluster: Start ray with \code{ray start --head --num-cpus 32} on the console before DrDimont execution.
-    #' It should work with "auto", if it does not specifiy IP-address given by the \code{ray start} command. (default: "auto")
+    #' It should work with "auto", if it does not specify IP-address given by the \code{ray start} command. (default: "auto")
     #'
     #' @param median_drug_response [bool] Specifying if the median instead of the mean of a drug's targets differential
     #' scores should be computed (default: FALSE)
-    #' @param absolute_difference [bool] Specifying if the absoulte differential scores instead of the actual differential
+    #' @param absolute_difference [bool] Specifying if the absolute differential scores instead of the actual differential
     #' scores should be used for drug response computation (default: FALSE)
     #'
     #' @param saving_path [string] Path to save intermediate output of DrDimont's functions. Default is current working directory.
@@ -116,16 +112,33 @@ drdimont_settings <- function(
     #'
     #' @examples
     #' settings <- drdimont_settings(
-    #'                      correlation_method="spearman",
-    #'                      handling_missing_data=list(
-    #'                                default="pairwise.complete.obs",
-    #'                                mrna="all.obs"),
-    #'                      reduction_method="pickHardThreshold",
-    #'                      max_path_length=3)
+    #'                 correlation_method="spearman",
+    #'                 handling_missing_data=list(
+    #'                     default="pairwise.complete.obs",
+    #'                     mrna="all.obs"),
+    #'                 reduction_method="pickHardThreshold",
+    #'                 max_path_length=3)
     #' 
     #' @export
     
     settings <- c(as.list(environment()), list(...))
+    
+    ### check if python installed, return error if not
+    if(settings$conda){
+        tryCatch({reticulate::conda_python('r-DrDimont')},
+                 warning = function(e) {
+                     message(format(Sys.time(), "[%y-%m-%d %X] "), 
+                             "WARNING: Python executable in conda environment 'r-DrDimont' not found. Either run `install_python_dependencies(package_manager='conda') or set `conda=FALSE` in `settings()` if pip installation was used.")
+                 }
+        )
+    }
+    else{
+        if(!reticulate::virtualenv_exists('r-DrDimont')) {
+            message(format(Sys.time(), "[%y-%m-%d %X] "), 
+                    "WARNING: Python executable in virtual environment 'r-DrDimont' not found. Either run `install_python_dependencies(package_manager='pip') or set `conda=TRUE` in `settings()` if conda installation was used.")
+        }
+    }
+
     return(settings)
 
 }

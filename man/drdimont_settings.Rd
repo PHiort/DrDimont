@@ -5,7 +5,7 @@
 \title{Create global settings variable for DrDimont pipeline}
 \usage{
 drdimont_settings(
-  saving_path = "tempdir()",
+  saving_path = tempdir(),
   save_data = FALSE,
   correlation_method = "spearman",
   handling_missing_data = "all.obs",
@@ -19,7 +19,6 @@ drdimont_settings(
   n_threads = 1,
   parallel_chunk_size = 10^6,
   print_graph_info = TRUE,
-  python_executable = "python",
   conda = FALSE,
   max_path_length = 3,
   int_score_mode = "auto",
@@ -95,12 +94,8 @@ during network reduction with method `p_value`. (default: 10^6)}
 \item{print_graph_info}{[bool] Specifying if a summary of the reduced graph should be printed to
 the console after network generation. (default: TRUE)}
 
-\item{python_executable}{[string] Path to Python executable used for generating the interaction score graphs.
-(default: "python")}
-
 \item{conda}{[bool] Specifying if python is installed in a conda environment. Set TRUE if python is installed
-with conda. Use \code{python_executable="-n name-of-your-environment python"} (change name-of-your-environment to
-your environment) or \code{python_executable="python"} if installed in base environment. (default: FALSE)}
+with conda. (default: FALSE)}
 
 \item{max_path_length}{[int] Integer of maximum length of simple paths to include in the
 \code{\link[DrDimont]{generate_interaction_score_graphs}} computation. (default: 3)}
@@ -111,12 +106,12 @@ graph sizes. (default: "auto")}
 
 \item{cluster_address}{[string] Local node IP-address of Ray if executed on a cluster.
 On a cluster: Start ray with \code{ray start --head --num-cpus 32} on the console before DrDimont execution.
-It should work with "auto", if it does not specifiy IP-address given by the \code{ray start} command. (default: "auto")}
+It should work with "auto", if it does not specify IP-address given by the \code{ray start} command. (default: "auto")}
 
 \item{median_drug_response}{[bool] Specifying if the median instead of the mean of a drug's targets differential
 scores should be computed (default: FALSE)}
 
-\item{absolute_difference}{[bool] Specifying if the absoulte differential scores instead of the actual differential
+\item{absolute_difference}{[bool] Specifying if the absolute differential scores instead of the actual differential
 scores should be used for drug response computation (default: FALSE)}
 
 \item{...}{Supply additional settings.}
@@ -131,11 +126,11 @@ Default parameters can be changed within the function call.
 }
 \examples{
 settings <- drdimont_settings(
-                     correlation_method="spearman",
-                     handling_missing_data=list(
-                               default="pairwise.complete.obs",
-                               mrna="all.obs"),
-                     reduction_method="pickHardThreshold",
-                     max_path_length=3)
+                correlation_method="spearman",
+                handling_missing_data=list(
+                    default="pairwise.complete.obs",
+                    mrna="all.obs"),
+                reduction_method="pickHardThreshold",
+                max_path_length=3)
 
 }

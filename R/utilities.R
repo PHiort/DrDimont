@@ -1,18 +1,12 @@
 graph_metrics <- function(graph, verbose = TRUE, return = FALSE) {
-    #' @title Analysis of metrics of an iGraph object
+    #' @title [INTERNAL] Analysis of metrics of an iGraph object
     #'
-    #' @description This helper function prints or returns multiple metrics of arbitrary
+    #' @description [INTERNAL] This helper function prints or returns multiple metrics of arbitrary
     #' iGraph graph object.
     #'
     #' @param graph [igraph] iGraph object to analyze.
     #' @param verbose [bool] If TRUE graph information is printed.
     #' @param return [bool] If TRUE graph information is returned from function.
-    #'
-    #' @examples
-    #' adj_mat <- matrix(rnorm(36), nrow=6)
-    #' graph <- igraph::graph_from_adjacency_matrix(adj_mat)
-    #' DrDimont::graph_metrics(graph, verbose=TRUE, return=FALSE)
-    #'
     #'
     #' @return Named list of metrics including vertex count, edge count, number of components,
     #' size of largest component and the relative frequency of zero degree vertices.
@@ -36,6 +30,7 @@ graph_metrics <- function(graph, verbose = TRUE, return = FALSE) {
     if(return == TRUE) {return(metrics)}
 }
 
+
 set_cluster <- function(n_threads) {
     #' @title [INTERNAL] Create and register cluster
     #'
@@ -50,6 +45,7 @@ set_cluster <- function(n_threads) {
     
     parallel::setDefaultCluster(parallel::makeCluster(n_threads))
 }
+
 
 shutdown_cluster <- function() {
     #' @title [INTERNAL] Shutdown cluster and remove corresponding connections
@@ -67,30 +63,6 @@ shutdown_cluster <- function() {
     try(closeAllConnections(), silent = TRUE)
 }
 
-install_python_dependencies <- function(package_manager="pip3") {
-    #' @title Installs python dependencies needed for interaction score computation
-    #'
-    #' @description Uses specified pip or conda executable (default: pip3) to 
-    #' install all required python modules. When using conda, the currently active 
-    #' environment is used. Commands run are `pip install -r requirements` or 
-    #' `conda install --file requirements`. Installs the following requirements: 
-    #' numpy, tqdm, python-igraph and ray
-    #'
-    #' @param package_manager [string] The package manager command or path to use (default: pip3)
-    #'
-    #' @return No return value, called to install python dependencies
-    #' 
-    #' @export
-    
-    if (grepl("pip", package_manager, fixed = TRUE)) {
-        py_requirements = system.file("requirements_pip.txt", package = "DrDimont")
-        system2(package_manager, args = c("install", "-r", py_requirements))
-    }
-    else if (grepl("conda", package_manager, fixed = TRUE)) {
-        py_requirements = system.file("requirements_conda.txt", package = "DrDimont")
-        system2(package_manager, args = c("install", "-c", "conda-forge", "--file", py_requirements))
-    }
-}
 
 get_layer <- function(name, layers) {
     #' @title [INTERNAL] Fetch layer by name from layer object

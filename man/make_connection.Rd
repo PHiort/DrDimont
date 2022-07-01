@@ -45,12 +45,13 @@ identically as these are matched by an inner join operation (refer to \code{\lin
 }
 \examples{
 data(metabolite_protein_interactions)
-inter_layer_connections = list(make_connection(from='mrna', to='protein',
-                                               connect_on='gene_name', weight=1),
-                               make_connection(from='protein', to='phosphosite',
-                                               connect_on='gene_name', weight=1),
-                               make_connection(from='protein', to='metabolite',
-                                               connect_on=metabolite_protein_interactions,
-                                               weight='combined_score'))
+
+example_inter_layer_connections = list(make_connection(from='mrna', to='protein',
+                                           connect_on='gene_name', weight=1),
+                                       make_connection(from='protein', to='phosphosite',
+                                           connect_on='gene_name', weight=1),
+                                       make_connection(from='protein', to='metabolite',
+                                           connect_on=metabolite_protein_interactions,
+                                           weight='combined_score'))
 
 }
