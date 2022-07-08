@@ -35,28 +35,28 @@ metabolite_data$groupA[1:3, 1:5]
 ## ----Create layers------------------------------------------------------------
 # Create individual layers
 mrna_layer <- make_layer(name="mrna",
-                         data_groupA=t(mrna_data$groupA[,-1]),
-                         data_groupB=t(mrna_data$groupB[,-1]),
+                         data_groupA=mrna_data$groupA[,-1],
+                         data_groupB=mrna_data$groupB[,-1],
                          identifiers_groupA=data.frame(gene_name=mrna_data$groupA$gene_name),
                          identifiers_groupB=data.frame(gene_name=mrna_data$groupB$gene_name))
 
 protein_layer <- make_layer(name="protein",
-                            data_groupA=t(protein_data$groupA[, c(-1,-2)]),
-                            data_groupB=t(protein_data$groupB[, c(-1,-2)]),
+                            data_groupA=protein_data$groupA[, c(-1,-2)],
+                            data_groupB=protein_data$groupB[, c(-1,-2)],
                             identifiers_groupA=data.frame(gene_name=protein_data$groupA$gene_name, 
                                 ref_seq=protein_data$groupA$ref_seq),
                             identifiers_groupB=data.frame(gene_name=protein_data$groupB$gene_name, 
                                 ref_seq=protein_data$groupB$ref_seq))
 
 phosphosite_layer <- make_layer(name="phosphosite",
-                                data_groupA=t(phosphosite_data$groupA[, c(-1,-2, -3)]),
-                                data_groupB=t(phosphosite_data$groupB[, c(-1,-2, -3)]),
+                                data_groupA=phosphosite_data$groupA[, c(-1,-2, -3)],
+                                data_groupB=phosphosite_data$groupB[, c(-1,-2, -3)],
                                 identifiers_groupA=data.frame(phosphosite_data$groupA[, 1:3]),
                                 identifiers_groupB=data.frame(phosphosite_data$groupB[, 1:3]))
 
 metabolite_layer <- make_layer(name="metabolite",
-                               data_groupA=t(metabolite_data$groupA[, c(-1,-2, -3)]),
-                               data_groupB=t(metabolite_data$groupB[, c(-1,-2, -3)]),
+                               data_groupA=metabolite_data$groupA[, c(-1,-2, -3)],
+                               data_groupB=metabolite_data$groupB[, c(-1,-2, -3)],
                                identifiers_groupA=data.frame(metabolite_data$groupA[, 1:3]),
                                identifiers_groupB=data.frame(metabolite_data$groupB[, 1:3]))
 
@@ -66,7 +66,7 @@ all_layers <- list(mrna_layer, protein_layer, phosphosite_layer, metabolite_laye
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  # (i) make inter-layer connection
-#  make_connection(from='mrna', to='protein', connect_on='gene_name', weight=1)
+#  make_connection(from='mrna', to='protein', connect_on='gene_name', weight=1, group="both")
 
 ## -----------------------------------------------------------------------------
 # Data inspection
@@ -74,14 +74,16 @@ metabolite_protein_interactions[1:3, ]
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  # (ii) make inter-layer connection
-#  make_connection(from='protein', to='metabolite', connect_on=metabolite_protein_interactions, weight='combined_score')
+#  make_connection(from='protein', to='metabolite',
+#                  connect_on=metabolite_protein_interactions,
+#                  weight='combined_score', group="both")
 
 ## ----Inter-layer connections--------------------------------------------------
 all_inter_layer_connections = list(
-    make_connection(from='mrna', to='protein', connect_on='gene_name', weight=1),
-    make_connection(from='protein', to='phosphosite', connect_on='gene_name', weight=1),
+    make_connection(from='mrna', to='protein', connect_on='gene_name', weight=1, group="both"),
+    make_connection(from='protein', to='phosphosite', connect_on='gene_name', weight=1, group="both"),
     make_connection(from='protein', to='metabolite', 
-        connect_on=metabolite_protein_interactions, weight='combined_score')
+        connect_on=metabolite_protein_interactions, weight='combined_score', group="both")
 )
 
 ## -----------------------------------------------------------------------------
@@ -144,7 +146,7 @@ example_individual_graphs <- generate_individual_graphs(
                                  layers=all_layers, 
                                  settings=example_settings)
 
-## ----Combine graphs-----------------------------------------------------------
+## ----Combine graphs, message=FALSE, results='hide'----------------------------
 example_combined_graphs <- generate_combined_graphs(
                                graphs=example_individual_graphs[["graphs"]], 
                                annotations=example_individual_graphs[["annotations"]], 
@@ -155,31 +157,31 @@ example_combined_graphs <- generate_combined_graphs(
 # Data inspection
 example_combined_graphs$annotations$both[1:3, ]
 
-## ----Drug targets and their edges---------------------------------------------
+## ----Drug targets and their edges, message=FALSE, results='hide'--------------
 example_drug_target_edges <- determine_drug_targets(
                                  graphs=example_combined_graphs[["graphs"]], 
                                  annotations=example_combined_graphs[["annotations"]], 
                                  drug_target_interactions=all_drug_target_interactions, 
                                  settings=example_settings)
 
-## ----Calculate interaction score, eval=FALSE----------------------------------
+## ----Calculate interaction score, eval=FALSE, message=FALSE, results='hide'----
 #  example_interaction_score_graphs <- generate_interaction_score_graphs(
 #                                          graphs=example_combined_graphs[["graphs"]],
 #                                          drug_target_edgelists=example_drug_target_edges[["edgelists"]],
 #                                          settings=example_settings)
 
-## ----Calculate differential score---------------------------------------------
+## ----Calculate differential score, message=FALSE, results='hide'--------------
 data("interaction_score_graphs_example")
 example_differential_graph <- generate_differential_score_graph(
                                   interaction_score_graphs=interaction_score_graphs_example, 
                                   settings=example_settings)
 
-# if interaction score graphs were computed use the following:
+# if interaction score graphs have been computed use the following:
 #example_differential_score_graph <- generate_differential_score_graph(
 #                                        interaction_score_graphs=example_interaction_score_graphs, 
 #                                        settings=example_settings)
 
-## ----Drug response------------------------------------------------------------
+## ----Drug response, message=FALSE, results='hide'-----------------------------
 example_drug_response_scores <- compute_drug_response_scores(
                                     differential_graph=example_differential_graph,
                                     drug_targets=example_drug_target_edges[["targets"]],

@@ -23,12 +23,11 @@ The main purpose of the pipeline is to easily and efficiently generate, reduce, 
 
 ![DrDimont Pipeline Overview](220401_overview.png){width=80%}
 
-(Figure adapted from Figure 1A from Hiort et al. (2022))
-
+(Figure adapted from Figure 1A by <i>Hiort et al. (2022)</i>)
 
 ## Installation
 
-The R package `DrDimont` can be installed via CRAN. The requirements of the package will be installed when installing the package. The complete source code can be accessed through https://gitlab.com/PHiort/DrDimont.
+The R package `DrDimont` can be installed via CRAN. The R dependencies of the package will also be installed when installing the package. The complete source code can be accessed through https://gitlab.com/PHiort/DrDimont.
 
 Install the R package with:
 ```{r setup1, message=FALSE, warning=FALSE, eval=FALSE}
@@ -42,36 +41,56 @@ library(DrDimont)
 ```
 
 ### Installation of Python dependencies
-The pipeline uses a Python script for an intermediate step. For differential drug response score computation, Python (3.8 or 3.9) needs to be installed on the system. The `install_python_dependencies()` function of DrDimont can be used to install the Python dependencies. The Python packages will be installed in a virtual python or conda environment called 'r-DrDimont'. Depending on which Python package manager is installed on your system, the dependencies can be installed using pip (default):
+The pipeline uses a Python script for one of the intermediate steps. For differential drug response score computation, Python (3.8 or 3.9) has to be installed on the system prior to running DrDimont. Please install either the standalone Python 3.9 (or 3.8) (https://www.python.org/downloads/), or Python via Anaconda (https://www.anaconda.com/products/distribution) or via miniconda (https://docs.conda.io/en/latest/miniconda.html) before running DrDimont.
+
+If Python is installed on your system, the `install_python_dependencies()` function of DrDimont can be used to install the required Python dependencies. The Python packages will be installed in a virtual python or conda environment called 'r-DrDimont'. Depending on which Python package manager (standalone or anaconda/miniconda Python) is installed on your system, the dependencies can be installed using pip (default; if standalone Python is installed):
 
 ```{r, echo=TRUE, warning=FALSE, eval=FALSE}
 install_python_dependencies(package_manager="pip")
 ```
 
-or conda: 
+or conda (if anaconda/miniconda Python is installed): 
 
 ```{r, echo=TRUE, warning=FALSE, eval=FALSE}
 install_python_dependencies(package_manager="conda")
 ```
-<b> ATTENTION </b>: When using pip Python version 3.8 or 3.9 must be installed on the system (currently one of the Python dependencies ('ray') only work with Python <= 3.9). When using conda Python 3.9 will be automatically installed in the conda environment. If the installation does not work with DrDimont's internal function please refer to a manual installation of the libraries with conda.
+<b> ATTENTION </b>: When using pip, Python version 3.8 or 3.9 must be installed on the system (currently one of the Python dependencies ('ray') only work with Python <= 3.9). When using conda Python 3.9 will be automatically installed in the conda environment. If the installation does not work with DrDimont's internal function please refer to a manual installation of the libraries as described below.
 
-Alternatively the Python dependencies can be installed manually using the `requirements_pip.txt` or the `requirements_conda.txt` file. <b> ATTENTION </b>: Please install the python dependencies into a virtual or conda environment with the name `r-DrDimont` otherwise the execution of the Python script will not work. 
+The Python dependencies can be installed manually as follows:
 
-For conda use:
+To create and install the python packages in the `r-DrDimont` environment, run the following on your command line (outside of R):
+
+With conda run:
 ```{bash, echo=TRUE, warning=FALSE, eval=FALSE}
-conda install -c conda-forge --file requirements_conda.txt
+conda create -n r-DrDimont -c conda-forge --yes python=3.9
+conda activate r-DrDimont
+pip install numpy tqdm igraph ray
 ```
-to install the python packages in your `r-DrDimont` environment. For pip use :
+
+With pip run:
 ```{bash, echo=TRUE, warning=FALSE, eval=FALSE}
-pip install -r requirements_pip.txt
+#on Windows run the following in your home folder:
+mkdir  .\Documents\.virtualenvs\
+python -m venv .\Documents\.virtualenvs\r-DrDimont
+.\Documents\.virtualenvs\r-DrDimont\Scripts\activate
+pip install --upgrade pip numpy tqdm igraph ray
+
+# on Linux and Mac run the following in your home folder:
+mkdir  .virtualenvs/
+python -m venv .virtualenvs/r-DrDimont
+source .virtualenvs/r-DrDimont/bin/activate
+pip install --upgrade pip numpy tqdm igraph ray
 ```
-You can download the text files from gitlab in the `inst/` directory or find them in your R package directory folder in the `DrDimont/` folder.
+
+ <b> ATTENTION </b>: The python dependencies have to be installed into a virtual or conda environment with the name `r-DrDimont` otherwise the execution of the Python script will not work. 
+
+A text file (`requirments_pip.txt` or `requirements_conda.txt`) with all required packages can also be downloaded from gitlab in the `inst/` directory or you can find them in your R package directory folder in the `DrDimont/` folder.
 
 ## Example Data Set Description
 
 The following exemplary pipeline application showcases the usage of molecular breast cancer data with ER+ (Estrogen receptor-positive) patient samples as group A and ER- (Estrogen receptor-negative) as group B. A reduced exemplary data set is included within the package.
 
-The breast cancer data by Krug et al. (2020) used for this tutorial is already preprocessed and only includes samples with tumor purity > 0.5 and known ER status. Metabolite data was sampled randomly to generate distributions similar to those reported, e.g., in Terunuma et al. (2014). Krug et al. (2020) published data from the Clinical Proteomic Tumor Analysis Consortium (CPTAC).
+The breast cancer data by <i>Krug et al. (2020)</i> used for this tutorial is already preprocessed and only includes samples with tumor purity > 0.5 and known ER status. Metabolite data was sampled randomly to generate distributions similar to those reported, e.g., in <i>Terunuma et al. (2014)</i>. <i>Krug et al. (2020)</i> published data from the Clinical Proteomic Tumor Analysis Consortium (CPTAC).
 
 The data set contains observations from:
 
@@ -85,7 +104,7 @@ The data set contains observations from:
 |phosphosites|10272 (ER+) and 11318 (ER-)|quantified phosphoproteomics data; normalized, removed phosphosites with > 20% NAs, reduced|phosphosite, gene name, NCBI RefSeq ID|
 |Metabolite| 275 from 33 (ER+) and 34 (ER-) samples|randomly sampled metabolomics data; removed metabolites with > 50% NAs|biochemical name, PubChem ID, metabolon ID|
 
-To limit run time and space requirement of the example we reduced the mRNA, protein and phosphosite data to a random set of 50 genes. The 50 genes were randomly selected from the set of genes with known drug targets from The Drug Gene Interaction Database (https://www.dgidb.org/). The metabolite data was also randomly reduced to 50 metabolites.
+To limit runtime and space requirements of the example we reduced the mRNA, protein and phosphosite data to a random set of 50 genes. The 50 genes were randomly selected from the set of genes with known drug targets from The Drug Gene Interaction Database (https://www.dgidb.org/). The metabolite data was also randomly reduced to 50 metabolites.
 
 ### Loading the data
 
@@ -104,12 +123,12 @@ data("drug_gene_interactions")
 
 After loading the data, you can use formatting functions to bring the data into the required input format:
 
-* make_layer() # Creates individual molecular layers from raw data and unique identifiers
-* make_connection() # To specify connections between two individual layers
-* make_drug_target() # Formats drug target interactions
+* make_layer() - creates individual molecular layers from raw data and unique identifiers
+* make_connection() - specifies connections between two individual layers
+* make_drug_target() - formats drug target interactions
 
 #### Create individual layers data structure from the molecular data
-Before running the pipeline, individual layer objects have to be created using `make_layer()`. The user should supply raw data stratified over two patient groups and unique identifiers for the molecular entities, e.g, genes. The function `make_layer()` requires these input: `name`, `data_groupA`, `data_groupB`, `identifiers_groupA` and `identifiers_groupB`. A layer should be given a unique name with the `name` argument. The `identifiers_groupA` and `identifiers_groupB` should be data frames containing one or more uniquely named columns with identifiers of the molecular entities, e.g., gene names. The raw data for `data_groupA` and `data_groupB` should be given with the samples as rows and the molecular entities (e.g, genes) as columns. The identifiers of the molecular entities need to be in the same order as the columns in the raw data. If you have only one group to analyse then set the parameters `data_groupB=NULL` and `identifiers_groupB=NULL`.
+Before running the pipeline, individual layer objects have to be created using `make_layer()`. Please supply raw data stratified over two patient groups and unique identifiers for the molecular entities, e.g, genes. The function `make_layer()` requires these input: `name`, `data_groupA`, `data_groupB`, `identifiers_groupA` and `identifiers_groupB`. A layer should be given a unique name with the `name` argument. The `identifiers_groupA` and `identifiers_groupB` should be data frames containing one or more uniquely named columns with identifiers of the molecular entities in the rows, e.g., gene names. The raw data for `data_groupA` and `data_groupB` should be given with the <b>molecular entities (e.g, genes) as rows</b> and the <b>samples as columns</b>. The identifiers of the molecular entities need to be in the same order as the columns in the raw data. If you have only one group to analyse then please set the parameters `data_groupB=NULL` and `identifiers_groupB=NULL`.
 
 
 Run the code below for exemplary raw data frames:
@@ -128,28 +147,28 @@ With the code below we create the individual layers:
 ```{r Create layers}
 # Create individual layers
 mrna_layer <- make_layer(name="mrna",
-                         data_groupA=t(mrna_data$groupA[,-1]),
-                         data_groupB=t(mrna_data$groupB[,-1]),
+                         data_groupA=mrna_data$groupA[,-1],
+                         data_groupB=mrna_data$groupB[,-1],
                          identifiers_groupA=data.frame(gene_name=mrna_data$groupA$gene_name),
                          identifiers_groupB=data.frame(gene_name=mrna_data$groupB$gene_name))
 
 protein_layer <- make_layer(name="protein",
-                            data_groupA=t(protein_data$groupA[, c(-1,-2)]),
-                            data_groupB=t(protein_data$groupB[, c(-1,-2)]),
+                            data_groupA=protein_data$groupA[, c(-1,-2)],
+                            data_groupB=protein_data$groupB[, c(-1,-2)],
                             identifiers_groupA=data.frame(gene_name=protein_data$groupA$gene_name, 
                                 ref_seq=protein_data$groupA$ref_seq),
                             identifiers_groupB=data.frame(gene_name=protein_data$groupB$gene_name, 
                                 ref_seq=protein_data$groupB$ref_seq))
 
 phosphosite_layer <- make_layer(name="phosphosite",
-                                data_groupA=t(phosphosite_data$groupA[, c(-1,-2, -3)]),
-                                data_groupB=t(phosphosite_data$groupB[, c(-1,-2, -3)]),
+                                data_groupA=phosphosite_data$groupA[, c(-1,-2, -3)],
+                                data_groupB=phosphosite_data$groupB[, c(-1,-2, -3)],
                                 identifiers_groupA=data.frame(phosphosite_data$groupA[, 1:3]),
                                 identifiers_groupB=data.frame(phosphosite_data$groupB[, 1:3]))
 
 metabolite_layer <- make_layer(name="metabolite",
-                               data_groupA=t(metabolite_data$groupA[, c(-1,-2, -3)]),
-                               data_groupB=t(metabolite_data$groupB[, c(-1,-2, -3)]),
+                               data_groupA=metabolite_data$groupA[, c(-1,-2, -3)],
+                               data_groupB=metabolite_data$groupB[, c(-1,-2, -3)],
                                identifiers_groupA=data.frame(metabolite_data$groupA[, 1:3]),
                                identifiers_groupB=data.frame(metabolite_data$groupB[, 1:3]))
 
@@ -162,50 +181,52 @@ all_layers <- list(mrna_layer, protein_layer, phosphosite_layer, metabolite_laye
 ```
 
 #### Create inter-layer connections data structure
-The inter-layer connections need to supplied by the user with `make_connection()`. The parameters `from` and `to` have to match to a name in the previously created layers by `make_layer()`. The established connection will result in an undirected combined graph. There are two options to connect layers: (i) based on identical identifiers of entities, or (ii) based on a given interaction table. 
+The inter-layer connections need to supplied by the user with `make_connection()`. The parameters `from` and `to` have to match to a name in the previously created layers by `make_layer()`. The established connection will result in an undirected combined graph. The parameter `group` indicates whether the connection should be applied to `both` groups (default) or only group `A` or `B`. There are two options to connect layers: (i) based on identical identifiers of entities, or (ii) based on a given interaction table. 
 
-For (i), two layers have to have one matching column name in their identifier data frame that is passed as the parameter `connect_on`. Two entities in the different layers with the same ID therein are connected with an edge of fixed weight (indicated by the `weight` parameter, default 1).
+For (i), two layers have to have one matching column name in their `identifiers_groupA`/`identifiers_groupB` data frames that is passed as the parameter `connect_on`. Two entities in the different layers with the same ID therein are connected with an edge of fixed weight (indicated by the `weight` parameter, default 1).
 
 For example:
 ```{r eval=FALSE}
 # (i) make inter-layer connection 
-make_connection(from='mrna', to='protein', connect_on='gene_name', weight=1)
+make_connection(from='mrna', to='protein', connect_on='gene_name', weight=1, group="both")
 ```
 
-For (ii), an interaction table containing three columns is required. Two columns should contain entity IDs that are also given in the respective identifier data frames of the two layers to be connected. One column of those should be named the same as a column name given in the identifier data frame of one layer and the second column the same for the second layer. The third column should contain the weights with which the respective entities of the two layers should be connected. 
+For (ii), an interaction table containing three columns is required. Two columns should contain entity IDs that are also given in the respective identifiers `identifiers_groupA`/`identifiers_groupB` of the two layers to be connected. One column of those should be named the same as a column name given in the `identifiers_groupA`/`identifiers_groupB` data frames of one layer and the second column the same for the second layer. The third column should contain the weights with which the respective entities of the two layers are to be connected. 
 
-See `data(metabolite_protein_interactions)` for an exemplary interaction table. The table contains the columns `pubchem_id` also given for the metabolite layer, `gene_name` also given for the protein layer, and `combined_score` containing the weights for the respective interactions:
+See `data(metabolite_protein_interactions)` for an exemplary interaction table. The table contains the columns "pubchem_id" also given for the metabolite layer, "gene_name" also given for the protein layer, and "combined_score" containing the weights for the respective interactions:
 
 ```{r}
 # Data inspection
 metabolite_protein_interactions[1:3, ]
 ```
 
-The interaction table should be passed to the `connect_on` parameter of the function `make_connection()` and the column name of the column containing the weights to the `weight` parameter. 
+The interaction table should be passed to the `connect_on` parameter of `make_connection()` and the column name of the column containing the weights to the `weight` parameter. 
 
 For example:
 
 ```{r eval=FALSE}
 # (ii) make inter-layer connection 
-make_connection(from='protein', to='metabolite', connect_on=metabolite_protein_interactions, weight='combined_score')
+make_connection(from='protein', to='metabolite', 
+                connect_on=metabolite_protein_interactions, 
+                weight='combined_score', group="both")
 ```
 
 
-If you have only one layer you can skip this step and set the parameter `inter_layer_connections=NULL` later on (see: Running the complete pipeline).
+If you have only one layer you can skip this step and set the parameter `inter_layer_connections=NULL` later on.
 
 
 Below we are creating a list of all inter-layer connections for pipeline input:
 ```{r Inter-layer connections}
 all_inter_layer_connections = list(
-    make_connection(from='mrna', to='protein', connect_on='gene_name', weight=1),
-    make_connection(from='protein', to='phosphosite', connect_on='gene_name', weight=1),
+    make_connection(from='mrna', to='protein', connect_on='gene_name', weight=1, group="both"),
+    make_connection(from='protein', to='phosphosite', connect_on='gene_name', weight=1, group="both"),
     make_connection(from='protein', to='metabolite', 
-        connect_on=metabolite_protein_interactions, weight='combined_score')
+        connect_on=metabolite_protein_interactions, weight='combined_score', group="both")
 )
 ```
 
 #### Create drug-target interaction data structure
-To run the entire pipeline, drug-target interactions are required. For that we need an interaction table mapping drugs to their targets, e.g, proteins. The table should contain two columns: one column containing the drug ids with the name `drug_name` and another column containing the drug targets with a name matching a column name in the identifier data frame of the target layer. In our example we are using a table from The Drug Gene Interaction Database providing interactions of drugs with genes. The exemplary data frame has three columns (gene_name, drug_name, drug_chembl_id), one containing the gene names also given for the target protein layer, the second containing the drug names which are used to identify the drugs and a third column containing the ChEMBL IDs of drugs which will be ignored in the pipeline.  
+To run the entire pipeline, drug-target interactions are required. For that we need an interaction table mapping drugs to their targets, e.g, proteins. The table should contain two columns: one column containing the drug ids with the name `drug_name` and another column containing the drug targets with a name matching a column name in the `identifiers_groupA`/`identifiers_groupB` data frames of the target layer. In our example we are using a table from The Drug Gene Interaction Database providing interactions of drugs with genes. The exemplary data frame has three columns (gene_name, drug_name, drug_chembl_id), one containing the gene names also given for the target protein layer, the second containing the drug names which are used to identify the drugs and a third column containing the ChEMBL IDs of drugs which will be ignored in the pipeline.  
 
 For example:
 ```{r}
@@ -237,11 +258,11 @@ return_errors(check_input(layers=all_layers,
 
 The pipeline can be run entirely or in individual steps. To set global pipeline options a settings list needs to be created using the `drdimont_settings()` function. This function contains default parameters that can be modified as shown below. For a detailed explanation of all possible settings and parameters please refer to the function documentation by calling `?drdimont_settings()`.
 
-Please be aware of the Python script used in one of the pipeline steps (see Requirements above). If you have installed python and the required packages via pip then you should set the `drdimont_settings()` parameter `conda=FALSE"`. If you have installed python and the required packages via conda then set the `drdimont_settings()` parameters `conda=TRUE`. `drdimont_settings()` will automatically check if Python can be found and show a warning if it was not found.
+Please be aware of the Python script used in one of the pipeline steps (see <em>Requirements</em> above). If you have installed python and the required packages via pip then you should set the `drdimont_settings()` parameter `conda=FALSE"`. If you have installed python and the required packages via conda then set the `drdimont_settings()` parameters `conda=TRUE`. `drdimont_settings()` will automatically check if Python can be found and shows a warning if not.
 
-The intermediate pipeline and drug response scores output (parameter `save_data`) is deactivated for this example (see below) but especially for large data files consider turning it on (the default). You can specify the output location of files with the `saving_path` parameter. If not specified all files will be written to a temporary file created by R. For this example, the data will be saved in a temporary directory. If you want to save the data elsewhere you need to change the parameter `saving_path` below. The intermediate output data includes RData-files of the correlation matrices, the individual graphs, the combined graphs, the drug target edges, the interaction score graphs, and the differential score graph. The drug response scores are saved in a tsv-file in the specified output directory if `save_data=TRUE`.
+The intermediate pipeline and drug response scores output (parameter `save_data`) is deactivated (default) but especially for large data files consider turning it on. You can specify the output location of files with the `saving_path` parameter. If not specified all files will be written to a temporary file created by R. For this example, the data will be saved in a temporary directory. If you want to save the data elsewhere you need to change the parameter `saving_path` below. The intermediate output data includes RData-files of the correlation matrices, the individual graphs, the combined graphs, the drug target edges, the interaction score graphs, and the differential score graph. The drug response scores are saved in a tsv-file in the specified output directory if `save_data=TRUE`.
 
-See <b>Running the individual pipeline steps</b> and call `?drdimont_settings()` for further explanations of settings parameters.
+See <em>Running the individual pipeline steps</em> and call `?drdimont_settings()` for further explanations of settings parameters.
 
 The settings list for the example:
 ```{r Settings}
@@ -287,7 +308,7 @@ The pipeline can also be used in a modular fashion. The modules then refer to th
 
 ### Step 1: Compute correlation matrices
 
-In step one, correlation matrices are computed for the specified layers described above. `spearman` (default), `pearson`, and `kendall` can be chosen as correlation methods by setting the parameter `reduction_method` in `drdimont_settings()`. The list of layers and the settings list are passed to `compute_correlation_matrices()`. To reduce run time this example will only analyze the first 10 genes and patients of the mRNA layer (set `layers=all_layers` in `compute_correlation_matrices()` to compute all layers):
+In step one, correlation matrices are computed for the specified layers described above. The parameter `correlation_method` in `drdimont_settings()` can be set to use "spearman" (default), "pearson", or "kendall" as the correlation methods. The list of layers and the settings list are passed to `compute_correlation_matrices()`. To reduce runtime this example will only analyze the first 10 genes and patients of the mRNA layer (to compute all layers set `layers=all_layers` in `compute_correlation_matrices()` ):
 
 ```{r Correlation matrices, message=FALSE, results='hide'}
 reduced_mrna_layer <- make_layer(name="mrna",
@@ -301,7 +322,7 @@ example_correlation_matrices <- compute_correlation_matrices(
                                     settings=example_settings)
 ```
 
-The resulting data structure `example_correlation_matrices` is a nested named list with 3 levels containing the correlation matrices and annotation data frames. The first level are `correlation_matrices` and `annotations`. The correlation matrices are separated on the second level by group (`groupA` and `groupB`) and on the third level by layer name (e.g., `mrna`, `protein`, etc.). The annotations element contains annotations for each groups and both combined at the second level (`groupA`, `groupB`, and`both`). The third level consist of named data frames, for each layers one data frame, which contain the pipeline-internal mapping of the identifier data frames of the individual layers to layer specific node IDs.
+The resulting data structure `example_correlation_matrices` is a nested named list with 3 levels containing the correlation matrices and annotation data frames. The first level are `correlation_matrices` and `annotations`. The correlation matrices are separated on the second level by group (`groupA` and `groupB`) and on the third level by layer name (e.g., `mrna`, `protein`, etc.). The annotations element contains annotations for each groups and both combined at the second level (`groupA`, `groupB`, and `both`). The third level consist of named data frames, for each layer one data frame, which contain the pipeline-internal mapping of the `identifiers_groupA`/`identifiers_groupB` data frames of the individual layers to layer specific node IDs.
 
 For example:
 ```{r}
@@ -312,7 +333,7 @@ correlation_matrices_example$annotations$groupA$protein[1:3, ]
 
 ### Step 2: Generate individual graphs
 
-Next, the individual graphs are generated. In this step edge weights are established based on the correlation computation and the edges are reduced by the specified reduction method. Reduction can be done based on maximizing scale-freeness employing `WGCNA::pickHardThreshold` (`reduction_method=pickHardThreshold` in `drdimont_settings()`; default) or based on significance of the correlation (`reduction_method=p_value`).
+Next, the individual graphs are generated. In this step edge weights are established based on the correlation computation and the edges are reduced by the specified reduction method. Reduction can be done based on maximizing scale-freeness employing `WGCNA::pickHardThreshold` (`reduction_method="pickHardThreshold"` in `drdimont_settings()`; default) or based on significance of the correlation (`reduction_method="p_value"`). Please call `?drdimont_settings()` for more information on additional "pickHardThreshold" and "p_value" settings. With "pickHardThreshold" the networks can also be reduced to at most a given number of mean edges or a given density with the parameters `mean_number_edges` and `edge_density` respectively (default of both: `NULL`).
 
 ```{r Individual graphs, message=FALSE, results='hide'}
 data("correlation_matrices_example")
@@ -322,14 +343,14 @@ example_individual_graphs <- generate_individual_graphs(
                                  settings=example_settings)
 ```
 
-The resulting data structure `example_individual_graphs` is a nested named list with 3 levels containing the graphs and annotation data frames. The element `graphs` contains, similar to the correlation matrices, the two groups on the second level and the graphs as iGraphs objects for each molecular layer on the third level. The `annotations` element is a copy from the `annotations` element of the `example_correlation_matrices` data (see Step 1).
+The resulting data structure `example_individual_graphs` is a nested named list with 3 levels containing the graphs and annotation data frames. The element `graphs` contains, similar to the correlation matrices, the two groups on the second level and the graphs as iGraphs objects for each molecular layer on the third level. The `annotations` element is a copy from the `annotations` element of the `example_correlation_matrices` data (see <em>Step 1</em>).
 
 
 ### Step 3: Combine graphs
 
 In this step, the individual graphs are combined to a single combined graph per group based on the inter-layer connections created above. The function creates the disjoint union of the individual graphs and adds inter-layer edges with the specified weight.
 
-```{r Combine graphs}
+```{r Combine graphs, message=FALSE, results='hide'}
 example_combined_graphs <- generate_combined_graphs(
                                graphs=example_individual_graphs[["graphs"]], 
                                annotations=example_individual_graphs[["annotations"]], 
@@ -350,7 +371,7 @@ example_combined_graphs$annotations$both[1:3, ]
 
 Next, in order to extract the list of relevant drugs the drug targets are identified in the combined graph for each group. Here, the node IDs of the specified drug targets are found in the combined graph and the drugs are mapped to their target nodes. Additionally, edge lists are returned containing the incident edges of drug target nodes for which integrated interaction scores are computed in the next step.
 
-```{r Drug targets and their edges}
+```{r Drug targets and their edges, message=FALSE, results='hide'}
 example_drug_target_edges <- determine_drug_targets(
                                  graphs=example_combined_graphs[["graphs"]], 
                                  annotations=example_combined_graphs[["annotations"]], 
@@ -364,14 +385,14 @@ The resulting data structure `example_drug_target_edges` is a nested named list 
 
 In this step, the combined graphs for each group together with the edge list from `drug_target_edges` are used to calculate the integrated interaction scores for all edges incident to drug targets. The pipeline uses a Python script to compute the integrated interaction scores in the function `generate_interaction_score_graphs()`. The input data for the Python script (combined graphs for both groups in gml format and relevant edges lists for both groups in tsv format) are written to disk and the script is called to calculate the scores. Output files written by the Python script are two graphs in gml format containing the interaction score as an additional edge attribute called `interactionweight`. These are then loaded into R and returned in a named list containing the graphs for `groupA` and `groupB`, respectively.
 
-<b> ATTENTION </b>: Data exchange via files is mandatory and can take long for large data. Additionally, the interaction score computation can be slow. Therefore, do not set `max_path_length` in `drdimont_settings()` to a large value (default: 3). If `max_path_length=1` then the integrated interaction scores will be the same as the correlation-based edge weights. 
+<b> ATTENTION </b>: Data exchange via files is necessary and can take long for large data. Additionally, the interaction score computation can be slow. Therefore, do not set `max_path_length` in `drdimont_settings()` to a large value (default: 3). If `max_path_length=1` then the integrated interaction scores will be the same as the correlation-based edge weights. 
 
 The Python script for integrated interaction score computation is parallelized using ray (https://www.ray.io/). Refer to the Ray documentation if you encounter problems with running the Python script in parallel. Use the setting `int_score_mode="sequential"` in `drdimont_settings()` for forced sequential computation or `int_score_mode="ray"` for parallel computation otherwise one of the two will be automatically chosen based on the size of the data.
 
 <b> Running Ray on a compute cluster </b>: If you want to run DrDimont on a cluster, run `ray start --head --num-cpus 12` (change number of CPUs as fit) on the command line, before starting the R session.
 
 
-```{r Calculate interaction score, eval=FALSE}
+```{r Calculate interaction score, eval=FALSE, message=FALSE, results='hide'}
 example_interaction_score_graphs <- generate_interaction_score_graphs(
                                         graphs=example_combined_graphs[["graphs"]], 
                                         drug_target_edgelists=example_drug_target_edges[["edgelists"]], 
@@ -383,13 +404,13 @@ example_interaction_score_graphs <- generate_interaction_score_graphs(
 
 To generate a differential graph, the difference of the interaction scores between the two groups is computed by subtracting the values of the edge attributes of `groupB` from `groupA` (i.e., `groupA` - `goupB`). A single differential graph with `differential_score` and `differential_interaction_score` as edge attributes is returned. The edge attribute `differential_score` is the difference of the correlation-based edge weights and `differential_interaction_score` is the difference in integrated interaction scores. Missing edges in one of the two groups are set to zero before computing the difference. The differential integrated interaction score is set to be `NA` if the integrated interaction score was not computed in both groups, i.e., for all edges not incident to a drug target.
 
-```{r Calculate differential score}
+```{r Calculate differential score, message=FALSE, results='hide'}
 data("interaction_score_graphs_example")
 example_differential_graph <- generate_differential_score_graph(
                                   interaction_score_graphs=interaction_score_graphs_example, 
                                   settings=example_settings)
 
-# if interaction score graphs were computed use the following:
+# if interaction score graphs have been computed use the following:
 #example_differential_score_graph <- generate_differential_score_graph(
 #                                        interaction_score_graphs=example_interaction_score_graphs, 
 #                                        settings=example_settings)
@@ -397,16 +418,16 @@ example_differential_graph <- generate_differential_score_graph(
 
 ### Step 7: Calculate differential drug response score
 
-In the last step, the differential drug response score is calculated based on the differential graph. The score of a drug is the mean (default) or the median of all differential integrated interaction scores of the edges incident to the drug targets. Drugs that have only targets without any edges have a `NA` as differential drug response.
+In the last step, the differential drug response score is calculated based on the differential graph. The score of a drug is the mean (default) or the median of all differential integrated interaction scores of the edges incident to the drug targets. Drugs that have only targets without any edges have a `NA` as differential drug response. Only drugs with at least one target present in the network are analysed. The differential drug response score can be calculated in different ways: by computing the mean (default) or the median of the differential integrated interaction scores of the edges incident to a drug's targets (set `median_drug_response=TRUE` in `drdimont_settings()` for median computation). The drug response score can also be computed from the differential (default) or the absolute differential integrated interaction scores (set `absolute_difference=TRUE` in `drdimont_settings()` to use absolute differential interaction scores). The drug response score is reported in absolute values.
 
-```{r Drug response}
+```{r Drug response, message=FALSE, results='hide'}
 example_drug_response_scores <- compute_drug_response_scores(
                                     differential_graph=example_differential_graph,
                                     drug_targets=example_drug_target_edges[["targets"]],
                                     settings=example_settings)
 ```
 
-The first few lines of the resulting data frame are shown below. The data frame is saved as `drug_response_score.tsv` in the specified output folder (see above). The drug response score is an indirect measure of how the strength of connectivity differs between the groups for the drug targets of the particular drug.
+The first few lines of the resulting data frame are shown below. The data frame is saved as `drug_response_score.tsv` in the specified output folder (see <em>Running the complete pipeline</em> above). The drug response score is an indirect measure of how the strength of connectivity differs between the groups for the drug targets of the particular drug.
 
 ```{r Result Output}
 head(dplyr::filter(example_drug_response_scores, !is.na(drug_response_score)))
@@ -415,16 +436,16 @@ head(dplyr::filter(example_drug_response_scores, !is.na(drug_response_score)))
 ## References
 Full citation:
 
-Krug et. al (2020): 
+<i>Krug et al. (2020)</i>: 
 
 * Krug, Karsten et al. “Proteogenomic Landscape of Breast Cancer Tumorigenesis and Targeted Therapy.” Cell vol. 183,5 (2020): 1436-1456.e31. https://www.doi.org/10.1016/j.cell.2020.10.036
 
-Terunuma et al.(2014):
+<i>Terunuma et al.(2014)</i>:
 
 * Terunuma, Atsushi et al. “MYC-driven accumulation of 2-hydroxyglutarate is associated with breast cancer prognosis.” The Journal of clinical investigation vol. 124,1 (2014): 398-412. https://www.doi.org/10.1172/JCI71180
 
-Hiort et al. (2022):
+<i>Hiort et al. (2022)</i>:
 
-* Hiort, Pauline et al. “DrDimont: Explainable drug response prediction from differential analysis of multi-omics networks.” bioRxiv 2022.05.31.493964. https://doi.org/10.1101/2022.05.31.493964
+* Hiort, Pauline et al. “DrDimont: Explainable drug response prediction from differential analysis of multi-omics networks.” bioRxiv 2022.05.31.493964 (2022). https://doi.org/10.1101/2022.05.31.493964
 
 The package `DrDimont` is an updated version of the previously published `molnet` package (https://github.com/molnet-org/molnet; https://CRAN.R-project.org/package=molnet)
