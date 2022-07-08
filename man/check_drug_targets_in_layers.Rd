@@ -20,3 +20,4 @@ Character string vector containing error messages.
 [INTERNAL] Checks if the parameters supplied in 'drug_target_interactions' makes
 sense in the context of the defined layers.
 }
+\keyword{internal}

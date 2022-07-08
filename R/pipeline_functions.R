@@ -1,26 +1,25 @@
 install_python_dependencies <- function(package_manager="pip") {
     #' @title Installs python dependencies needed for interaction score computation
     #'
-    #' @description Uses specified pip or conda executable (default: pip) to 
-    #' install all required python modules. The Python packages are installed 
+    #' @description Uses pip (default) or conda as specified to 
+    #' install all required Python modules. The Python packages are installed 
     #' into a virtual Python or conda environment called 'r-DrDimont'. 
-    #' Installs the following requirements: numpy, tqdm, python-igraph and ray
+    #' The following requirements are installed: numpy, tqdm, python-igraph and ray.
+    #' The environment is created with reticulate.
     #'
-    #' @param package_manager ["pip"|"conda"] The package manager command or path to use (default: pip)
+    #' @param package_manager ["pip"|"conda"] Package manager to use (default: pip)
     #'
     #' @return No return value, called to install python dependencies
     #' 
     #' @export
     
     if (package_manager=="pip") {
-        #py_requirements = system.file("requirements_pip.txt", package = "DrDimont")
-        #system2(package_manager, args = c("install", "-r", py_requirements))
-        reticulate::virtualenv_create("r-DrDimont", packages=list("numpy", "tqdm", "python-igraph", "ray"), ignore_installed=TRUE)
+        reticulate::virtualenv_create("r-DrDimont")
+        reticulate::virtualenv_install(packages=list("numpy", "tqdm", "igraph", "ray"), envname="r-DrDimont", ignore_installed=TRUE)
     }
     else if (package_manager=="conda") {
-        #py_requirements = system.file("requirements_conda.txt", package = "DrDimont")
-        #system2(package_manager, args = c("install", "-c", "conda-forge", "--file", py_requirements))
-        reticulate::conda_create("r-DrDimont", python_version=3.9, forge=TRUE, packages=list("numpy", "tqdm", "python-igraph", "ray-core"))
+        reticulate::conda_create("r-DrDimont", python_version=3.9, packages="pip")
+        reticulate::py_install(packages=list("numpy", "tqdm", "igraph", "ray"), envname="r-DrDimont", method="conda", pip=TRUE)
     }
     else{
         stop(message(format(Sys.time(), "[%y-%m-%d %X] "), 
@@ -53,8 +52,8 @@ make_layer <- function(name, data_groupA, data_groupB, identifiers_groupA, ident
     #'
     #' example_protein_layer <- make_layer(
     #'                              name="protein",
-    #'                              data_groupA=t(protein_data$groupA[, c(-1,-2)]),
-    #'                              data_groupB=t(protein_data$groupB[, c(-1,-2)]),
+    #'                              data_groupA=protein_data$groupA[, c(-1,-2)],
+    #'                              data_groupB=protein_data$groupB[, c(-1,-2)],
     #'                              identifiers_groupA=data.frame(
     #'                                  gene_name=protein_data$groupA$gene_name,
     #'                                  ref_seq=protein_data$groupA$ref_seq),
@@ -66,12 +65,12 @@ make_layer <- function(name, data_groupA, data_groupB, identifiers_groupA, ident
 
     ### if group2 data and identifiers not given set it to NULL
     if ((is.null(data_groupB)) & (is.null(identifiers_groupB))){
-        layer <- list(groupA = list(data = data.frame(data_groupA), identifiers = data.frame(identifiers_groupA)),
+        layer <- list(groupA = list(data = t(data.frame(data_groupA)), identifiers = data.frame(identifiers_groupA)),
                       groupB = NULL,
                       name = name)
     } else {
-        layer <- list(groupA = list(data = data.frame(data_groupA), identifiers = data.frame(identifiers_groupA)),
-                      groupB = list(data = data.frame(data_groupB), identifiers = data.frame(identifiers_groupB)),
+        layer <- list(groupA = list(data = t(data.frame(data_groupA)), identifiers = data.frame(identifiers_groupA)),
+                      groupB = list(data = t(data.frame(data_groupB)), identifiers = data.frame(identifiers_groupB)),
                       name = name)
     }
     return_errors(check_layer(layer))
@@ -93,17 +92,15 @@ make_connection <- function(from, to, connect_on, weight=1, group="both") {
     #' the identifiers of both layers, they have to be named identically and the IDs have to be formatted
     #' identically as these are matched by an inner join operation (refer to \code{\link[DrDimont]{make_layer}}).
     #'
-    #' @param from [string] Character string referring to the name of the layer **from** which the connection
-    #' should be established
-    #' @param to [string] Character string referring to the name of the layer **to** which the connection
-    #' should be established
+    #' @param from [string] Name of the layer from which the connection should be established
+    #' @param to [string] Name of the layer to which the connection should be established
     #' @param connect_on [string|table] Specifies how the two layers should be connected. This can be based on a
     #' mutual ID or a table specifying interactions. Mutual ID: Character string specifying the name of an identifier
     #' that is present in both layers (e.g., `NCBI ID` to connect proteins and mRNA). Interaction table: A table mapping
     #' two identifiers of two layers. The columns have exactly the same names as the identifiers of the layers. The table has to
     #' contain an additional column specifying the weight between two components/nodes (see `weight` argument)
     #' @param weight [int|string] Specifies the edge weight between the layers. This can be supplied as a number
-    #' applied to every connection or a column of the interaction table.
+    #' applied to every connection or a column name of the interaction table.
     #' Fixed weight: A umber specifying the weight of every connection between the layers.
     #' Based on interaction table: Character string specifying the name of a column in the
     #' table passed as the `by` parameter which is used as edge weight. (default: 1)
@@ -338,18 +335,17 @@ compute_correlation_matrices <- function(layers, settings) {
     #' \dontshow{
     #' WGCNA::disableWGCNAThreads()
     #' }
-    #' data(layers_example)
     #'
     #' example_settings <- drdimont_settings(
     #'                         handling_missing_data=list(
     #'                             default="pairwise.complete.obs",
     #'                             mrna="all.obs"))
     #' 
-    #' # example with reduced mRNA layer for runtime reasons:
+    #' # example with reduced mRNA layer for lower runtime:
     #' data(mrna_data)
     #' reduced_mrna_layer <- make_layer(name="mrna",
-    #'                           data_groupA=t(mrna_data$groupA[1:10,2:11]),
-    #'                           data_groupB=t(mrna_data$groupB[1:10,2:11]),
+    #'                           data_groupA=mrna_data$groupA[1:10,2:6],
+    #'                           data_groupB=mrna_data$groupB[1:10,2:6],
     #'                           identifiers_groupA=data.frame(gene_name=mrna_data$groupA$gene_name[1:10]),
     #'                           identifiers_groupB=data.frame(gene_name=mrna_data$groupB$gene_name[1:10]))
     #' 
@@ -357,12 +353,8 @@ compute_correlation_matrices <- function(layers, settings) {
     #'                                     layers=list(reduced_mrna_layer), 
     #'                                     settings=example_settings)
     #' 
-    #' # to run all layers use:
-    #' \donttest{
-    #' example_correlation_matrices <- compute_correlation_matrices(
-    #'                                     layers=layers_example, 
-    #'                                     settings=example_settings)
-    #' }
+    #' # to run all layers use layers=layers_example from data(layers_example) 
+    #' # in compute_correlation_matrices()
     #'
 
     ### empty list to store correlation matrices of individual layers

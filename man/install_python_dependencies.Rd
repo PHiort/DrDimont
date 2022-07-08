@@ -7,14 +7,15 @@
 install_python_dependencies(package_manager = "pip")
 }
 \arguments{
-\item{package_manager}{["pip"|"conda"] The package manager command or path to use (default: pip)}
+\item{package_manager}{["pip"|"conda"] Package manager to use (default: pip)}
 }
 \value{
 No return value, called to install python dependencies
 }
 \description{
-Uses specified pip or conda executable (default: pip) to 
-install all required python modules. The Python packages are installed 
+Uses pip (default) or conda as specified to 
+install all required Python modules. The Python packages are installed 
 into a virtual Python or conda environment called 'r-DrDimont'. 
-Installs the following requirements: numpy, tqdm, python-igraph and ray
+The following requirements are installed: numpy, tqdm, python-igraph and ray.
+The environment is created with reticulate.
 }

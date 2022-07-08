@@ -17,3 +17,4 @@ Character string vector containing error messages.
 [INTERNAL] Checks if the data used to define interaction between drugs and
 targets is valid and formatted correctly.
 }
+\keyword{internal}

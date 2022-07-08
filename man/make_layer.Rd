@@ -38,8 +38,8 @@ data(protein_data)
 
 example_protein_layer <- make_layer(
                              name="protein",
-                             data_groupA=t(protein_data$groupA[, c(-1,-2)]),
-                             data_groupB=t(protein_data$groupB[, c(-1,-2)]),
+                             data_groupA=protein_data$groupA[, c(-1,-2)],
+                             data_groupB=protein_data$groupB[, c(-1,-2)],
                              identifiers_groupA=data.frame(
                                  gene_name=protein_data$groupA$gene_name,
                                  ref_seq=protein_data$groupA$ref_seq),

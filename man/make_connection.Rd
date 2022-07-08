@@ -7,11 +7,9 @@
 make_connection(from, to, connect_on, weight = 1, group = "both")
 }
 \arguments{
-\item{from}{[string] Character string referring to the name of the layer **from** which the connection
-should be established}
+\item{from}{[string] Name of the layer from which the connection should be established}
 
-\item{to}{[string] Character string referring to the name of the layer **to** which the connection
-should be established}
+\item{to}{[string] Name of the layer to which the connection should be established}
 
 \item{connect_on}{[string|table] Specifies how the two layers should be connected. This can be based on a
 mutual ID or a table specifying interactions. Mutual ID: Character string specifying the name of an identifier
@@ -20,7 +18,7 @@ two identifiers of two layers. The columns have exactly the same names as the id
 contain an additional column specifying the weight between two components/nodes (see `weight` argument)}
 
 \item{weight}{[int|string] Specifies the edge weight between the layers. This can be supplied as a number
-applied to every connection or a column of the interaction table.
+applied to every connection or a column name of the interaction table.
 Fixed weight: A umber specifying the weight of every connection between the layers.
 Based on interaction table: Character string specifying the name of a column in the
 table passed as the `by` parameter which is used as edge weight. (default: 1)}

@@ -7,6 +7,7 @@ check_layer <- function(layer) {
     #' @param layer [list] Named list of layer to check. Created by \code{\link[DrDimont]{make_layer}}
     #' @return Character string vector containing error messages.
     #' 
+    #' @keywords internal
     #' @export
     
     errors <- c()
@@ -51,6 +52,7 @@ check_connection <- function(connection) {
     #' @param connection [list] Connection to check. Created by \code{\link[DrDimont]{make_connection}}
     #' @return Character string vector containing error messages.
     #' 
+    #' @keywords internal
     #' @export
 
     errors <- c()
@@ -132,6 +134,7 @@ check_sensible_connections <- function(connection, layers) {
     #'
     #' @return Character string vector containing error messages.
     #' 
+    #' @keywords internal
     #' @export
     
     errors <- c()
@@ -203,6 +206,7 @@ check_drug_target <- function(drug_target_interactions) {
     #'
     #' @return Character string vector containing error messages.
     #' 
+    #' @keywords internal
     #' @export
 
     errors <- c()
@@ -238,6 +242,7 @@ check_drug_targets_in_layers <- function(drug_target_interactions, layers) {
     #'
     #' @return Character string vector containing error messages.
     #' 
+    #' @keywords internal
     #' @export
     
     layer_names <- c()

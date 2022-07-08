@@ -21,3 +21,4 @@ size of largest component and the relative frequency of zero degree vertices.
 [INTERNAL] This helper function prints or returns multiple metrics of arbitrary
 iGraph graph object.
 }
+\keyword{internal}

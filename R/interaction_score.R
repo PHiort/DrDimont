@@ -14,6 +14,7 @@ write_interaction_score_input <- function(combined_graphs, drug_target_edgelists
     #'
     #' @return No return value, used internally
     #' 
+    #' @keywords internal
     #' @export
 
     # iterate over groups
@@ -66,6 +67,7 @@ calculate_interaction_score <- function(max_path_length,
     #'
     #' @return Does not return anything, instead calls Python script which outputs `gml` files
     #' 
+    #' @keywords internal
     #' @export
 
     py_script <- ifelse(is.null(script_path), system.file("python_igraph_interaction_score.py", package = "DrDimont"), script_path)
@@ -91,9 +93,9 @@ calculate_interaction_score <- function(max_path_length,
     }
 
     if (conda) {
-        python_executable=reticulate::conda_python(envname='r-drdimont')
+        python_executable=reticulate::conda_python(envname='r-DrDimont')
     } else {
-        python_executable=reticulate::virtualenv_python(envname="r-drdimont")
+        python_executable=reticulate::virtualenv_python(envname="r-DrDimont")
     }
     res <- system2(python_executable, args = c(py_script,
                                                graph_file_groupA,
@@ -134,6 +136,7 @@ load_interaction_score_output <- function(saving_path, graphB_null) {
     #' @return A named list (elements `groupA` and `groupB`). Each element contains an iGraph object
     #' containing the interaction score as edge attribute.
     #' 
+    #' @keywords internal
     #' @export
 
     graphs <- list()

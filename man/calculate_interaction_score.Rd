@@ -54,3 +54,4 @@ alternate script can be specified with `script_path`.
 The score for an edge is computed as the sum of the average product of weights along all simple
 paths of length l (over all path lengths up to `max_path_length`) between the source and target node of the edge.
 }
+\keyword{internal}

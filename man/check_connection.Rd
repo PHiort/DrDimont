@@ -16,3 +16,4 @@ Character string vector containing error messages.
 [INTERNAL] Checks if the data given to create an inter-layer connection is valid and has the
 right input format
 }
+\keyword{internal}

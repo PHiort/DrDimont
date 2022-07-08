@@ -16,3 +16,4 @@ Character string vector containing error messages.
 [INTERNAL] Checks if the data used to create a network layer is valid and has the right
 format
 }
+\keyword{internal}

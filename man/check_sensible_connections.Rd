@@ -19,3 +19,4 @@ Character string vector containing error messages.
 [INTERNAL] Checks if the connection defined in 'connection' makes sense in
 context of the defined layers.
 }
+\keyword{internal}

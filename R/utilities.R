@@ -11,6 +11,7 @@ graph_metrics <- function(graph, verbose = TRUE, return = FALSE) {
     #' @return Named list of metrics including vertex count, edge count, number of components,
     #' size of largest component and the relative frequency of zero degree vertices.
     #' 
+    #' @keywords internal
     #' @export
 
     metrics <- list('n_vertices' = igraph::gorder(graph),
@@ -41,6 +42,7 @@ set_cluster <- function(n_threads) {
     #'
     #' @return No return value, called internally to create cluster
     #' 
+    #' @keywords internal
     #' @export
     
     parallel::setDefaultCluster(parallel::makeCluster(n_threads))
@@ -57,6 +59,7 @@ shutdown_cluster <- function() {
     #' 
     #' @return No return value, called internally to shutdown cluster
     #' 
+    #' @keywords internal
     #' @export
     
     try(parallel::stopCluster(parallel::getDefaultCluster()), silent = TRUE)
@@ -75,6 +78,7 @@ get_layer <- function(name, layers) {
     #' 
     #' @return Returns the layer along with layer names
     #' 
+    #' @keywords internal
     #' @export
     
     layer_names <- sapply(layers, function(l) l[['name']])
