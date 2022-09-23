@@ -34,16 +34,15 @@ WGCNA::disableWGCNAThreads()
 
 example_settings <- drdimont_settings(
                         handling_missing_data=list(
-                            default="pairwise.complete.obs",
-                            mrna="all.obs"))
+                            default="all.obs"))
 
-# example with reduced mRNA layer for lower runtime:
+# mini example with reduced mRNA layer for shorter runtime:
 data(mrna_data)
 reduced_mrna_layer <- make_layer(name="mrna",
-                          data_groupA=mrna_data$groupA[1:10,2:6],
-                          data_groupB=mrna_data$groupB[1:10,2:6],
-                          identifiers_groupA=data.frame(gene_name=mrna_data$groupA$gene_name[1:10]),
-                          identifiers_groupB=data.frame(gene_name=mrna_data$groupB$gene_name[1:10]))
+                          data_groupA=mrna_data$groupA[1:5,2:6],
+                          data_groupB=mrna_data$groupB[1:5,2:6],
+                          identifiers_groupA=data.frame(gene_name=mrna_data$groupA$gene_name[1:5]),
+                          identifiers_groupB=data.frame(gene_name=mrna_data$groupB$gene_name[1:5]))
 
 example_correlation_matrices <- compute_correlation_matrices(
                                     layers=list(reduced_mrna_layer), 
