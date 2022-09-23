@@ -12,7 +12,7 @@
 
 <meta name="author" content="Katharina Baum, Pauline Hiort, Julian Hugo, Spoorthi Kashyap, Nataniel Mueller, and Justus Zeinert" />
 
-<meta name="date" content="2022-07-08" />
+<meta name="date" content="2022-09-23" />
 
 <title>DrDimont: Drug Response Prediction from Differential Multi-Omics Networks</title>
 
@@ -122,13 +122,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -336,15 +343,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 Differential Multi-Omics Networks</h1>
 <h4 class="author">Katharina Baum, Pauline Hiort, Julian Hugo, Spoorthi
 Kashyap, Nataniel Mueller, and Justus Zeinert</h4>
-<h4 class="date">2022-07-08</h4>
+<h4 class="date">2022-09-23</h4>
 
 
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>The main purpose of the pipeline is to easily and efficiently
-generate, reduce, and combine molecular networks from two groups or
-conditions (e.g., of patients) to compute a differential drug
+<p>The main purpose of the DrDimont pipeline is to easily and
+efficiently generate, reduce, and combine molecular networks from two
+groups or conditions (e.g., of patients) to compute a differential drug
 interaction score based on drug targets. This allows for improved
 predictions of the effect of drugs (e.g., for cancer) on two groups with
 different characteristics.</p>
@@ -359,12 +366,13 @@ different characteristics.</p>
 <p>The R package <code>DrDimont</code> can be installed via CRAN. The R
 dependencies of the package will also be installed when installing the
 package. The complete source code can be accessed through <a href="https://gitlab.com/PHiort/DrDimont" class="uri">https://gitlab.com/PHiort/DrDimont</a>.</p>
-<p>Install the R package with:</p>
+<p>The R package can be installed with:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&#39;DrDimont&#39;</span>)</span></code></pre></div>
-<p>After installation, load the package into your session with:</p>
+<p>After installation, you can load the package into your session
+with:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DrDimont)</span></code></pre></div>
-<div id="installation-of-python-dependencies" class="section level3">
-<h3>Installation of Python dependencies</h3>
+<div id="installation-of-python-and-its-dependencies" class="section level3">
+<h3>Installation of Python and its dependencies</h3>
 <p>The pipeline uses a Python script for one of the intermediate steps.
 For differential drug response score computation, Python (3.8 or 3.9)
 has to be installed on the system prior to running DrDimont. Please
@@ -389,10 +397,9 @@ installed on the system (currently one of the Python dependencies
 will be automatically installed in the conda environment. If the
 installation does not work with DrDimont’s internal function please
 refer to a manual installation of the libraries as described below.</p>
-<p>The Python dependencies can be installed manually as follows:</p>
-<p>To create and install the python packages in the
-<code>r-DrDimont</code> environment, run the following on your command
-line (outside of R):</p>
+<p>To manually create and install the python packages in the
+<code>r-DrDimont</code> environment, please run the following on your
+command line (outside of R):</p>
 <p>With conda run:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">-n</span> r-DrDimont <span class="at">-c</span> conda-forge <span class="at">--yes</span> python=3.9</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate r-DrDimont</span>
@@ -405,7 +412,7 @@ line (outside of R):</p>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> pip numpy tqdm igraph ray</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># on Linux and Mac run the following in your home folder:</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span>  .virtualenvs/</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> .virtualenvs/</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> venv .virtualenvs/r-DrDimont</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .virtualenvs/r-DrDimont/bin/activate</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> pip numpy tqdm igraph ray</span></code></pre></div>
@@ -429,8 +436,7 @@ B. A reduced exemplary data set is included within the package.</p>
 tutorial is already preprocessed and only includes samples with tumor
 purity &gt; 0.5 and known ER status. Metabolite data was sampled
 randomly to generate distributions similar to those reported, e.g., in
-<i>Terunuma et al. (2014)</i>. <i>Krug et al. (2020)</i> published data
-from the Clinical Proteomic Tumor Analysis Consortium (CPTAC).</p>
+<i>Terunuma et al. (2014)</i>.</p>
 <p>The data set contains observations from:</p>
 <ul>
 <li>78 ER+ samples</li>
@@ -487,8 +493,8 @@ mRNA, protein and phosphosite data to a random set of 50 genes. The 50
 genes were randomly selected from the set of genes with known drug
 targets from The Drug Gene Interaction Database (<a href="https://www.dgidb.org/" class="uri">https://www.dgidb.org/</a>).
 The metabolite data was also randomly reduced to 50 metabolites.</p>
-<div id="loading-the-data" class="section level3">
-<h3>Loading the data</h3>
+<div id="load-the-data" class="section level3">
+<h3>Load the data</h3>
 <p>First you load the pre-processed data. This data is included in the
 package and does not need to be manually loaded but can be directly
 accessed once <code>library(DrDimont)</code> is called.</p>
@@ -499,10 +505,10 @@ accessed once <code>library(DrDimont)</code> is called.</p>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;metabolite_protein_interactions&quot;</span>)</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;drug_gene_interactions&quot;</span>)</span></code></pre></div>
 </div>
-<div id="transforming-the-data-to-the-required-input-format" class="section level3">
-<h3>Transforming the data to the required input format</h3>
-<p>After loading the data, you can use formatting functions to bring the
-data into the required input format:</p>
+<div id="transform-the-data-to-the-required-input-format" class="section level3">
+<h3>Transform the data to the required input format</h3>
+<p>After loading the data, you can use formatting functions to bring
+your data into the required input formats:</p>
 <ul>
 <li>make_layer() - creates individual molecular layers from raw data and
 unique identifiers</li>
@@ -512,23 +518,23 @@ layers</li>
 </ul>
 <div id="create-individual-layers-data-structure-from-the-molecular-data" class="section level4">
 <h4>Create individual layers data structure from the molecular data</h4>
-<p>Before running the pipeline, individual layer objects have to be
-created using <code>make_layer()</code>. Please supply raw data
-stratified over two patient groups and unique identifiers for the
-molecular entities, e.g, genes. The function <code>make_layer()</code>
-requires these input: <code>name</code>, <code>data_groupA</code>,
+<p>Before running the pipeline, you can create individual layer objects
+using <code>make_layer()</code>. Please supply raw data stratified over
+two patient groups and unique identifiers for the molecular entities,
+e.g, genes. The function <code>make_layer()</code> requires the
+following input parameters: <code>name</code>, <code>data_groupA</code>,
 <code>data_groupB</code>, <code>identifiers_groupA</code> and
-<code>identifiers_groupB</code>. A layer should be given a unique name
+<code>identifiers_groupB</code>. Please give each layer a unique name
 with the <code>name</code> argument. The <code>identifiers_groupA</code>
-and <code>identifiers_groupB</code> should be data frames containing one
-or more uniquely named columns with identifiers of the molecular
-entities in the rows, e.g., gene names. The raw data for
-<code>data_groupA</code> and <code>data_groupB</code> should be given
-with the <b>molecular entities (e.g, genes) as rows</b> and the
-<b>samples as columns</b>. The identifiers of the molecular entities
-need to be in the same order as the columns in the raw data. If you have
-only one group to analyse then please set the parameters
-<code>data_groupB=NULL</code> and
+and <code>identifiers_groupB</code> parameters are given data frames
+which should contain one or more uniquely named columns with identifiers
+of the molecular entities in the rows, e.g., gene names. You can supply
+the raw data with the <code>data_groupA</code> and
+<code>data_groupB</code> parameters with the <b>molecular entities (e.g,
+genes) as rows</b> and the <b>samples as columns</b>. Please make sure
+that the identifiers of the molecular entities are in the same order as
+the columns in the raw data. If you have only one group to analyse then
+you can set the parameters <code>data_groupB=NULL</code> and
 <code>identifiers_groupB=NULL</code>.</p>
 <p>Run the code below for exemplary raw data frames:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data inspection</span></span>
@@ -552,15 +558,15 @@ only one group to analyse then please set the parameters
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2             1-methylnicotinamide        27665        457  61561.9  38714.07</span></span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 1-stearoylglycerophosphoinositol        19324       6563 106015.4        NA</span></span>
 <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6     cytidine 5&#39;-diphosphocholine        34418      13804       NA 736205.19</span></span></code></pre></div>
-<p>With the code below we create the individual layers:</p>
+<p>Run the code below to create the individual layers:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create individual layers</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>mrna_layer <span class="ot">&lt;-</span> <span class="fu">make_layer</span>(<span class="at">name=</span><span class="st">&quot;mrna&quot;</span>,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data_groupA=</span>mrna_data<span class="sc">$</span>groupA[,<span class="sc">-</span><span class="dv">1</span>],</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data_groupB=</span>mrna_data<span class="sc">$</span>groupB[,<span class="sc">-</span><span class="dv">1</span>],</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">identifiers_groupA=</span><span class="fu">data.frame</span>(<span class="at">gene_name=</span>mrna_data<span class="sc">$</span>groupA<span class="sc">$</span>gene_name),</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">identifiers_groupB=</span><span class="fu">data.frame</span>(<span class="at">gene_name=</span>mrna_data<span class="sc">$</span>groupB<span class="sc">$</span>gene_name))</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:25] Layer &quot;mrna&quot;, group &quot;groupA&quot; contains 78 samples and 50 genes/proteins/entities.</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:25] Layer &quot;mrna&quot;, group &quot;groupB&quot; contains 34 samples and 50 genes/proteins/entities.</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;mrna&quot;, group &quot;groupA&quot; contains 78 samples and 50 genes/proteins/entities.</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;mrna&quot;, group &quot;groupB&quot; contains 34 samples and 50 genes/proteins/entities.</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>protein_layer <span class="ot">&lt;-</span> <span class="fu">make_layer</span>(<span class="at">name=</span><span class="st">&quot;protein&quot;</span>,</span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                            <span class="at">data_groupA=</span>protein_data<span class="sc">$</span>groupA[, <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>)],</span>
@@ -569,40 +575,40 @@ only one group to analyse then please set the parameters
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>                                <span class="at">ref_seq=</span>protein_data<span class="sc">$</span>groupA<span class="sc">$</span>ref_seq),</span>
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>                            <span class="at">identifiers_groupB=</span><span class="fu">data.frame</span>(<span class="at">gene_name=</span>protein_data<span class="sc">$</span>groupB<span class="sc">$</span>gene_name, </span>
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>                                <span class="at">ref_seq=</span>protein_data<span class="sc">$</span>groupB<span class="sc">$</span>ref_seq))</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:25] Layer &quot;protein&quot;, group &quot;groupA&quot; contains 78 samples and 53 genes/proteins/entities.</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:25] Layer &quot;protein&quot;, group &quot;groupB&quot; contains 34 samples and 53 genes/proteins/entities.</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;protein&quot;, group &quot;groupA&quot; contains 78 samples and 53 genes/proteins/entities.</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;protein&quot;, group &quot;groupB&quot; contains 34 samples and 53 genes/proteins/entities.</span></span>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>phosphosite_layer <span class="ot">&lt;-</span> <span class="fu">make_layer</span>(<span class="at">name=</span><span class="st">&quot;phosphosite&quot;</span>,</span>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>                                <span class="at">data_groupA=</span>phosphosite_data<span class="sc">$</span>groupA[, <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">3</span>)],</span>
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>                                <span class="at">data_groupB=</span>phosphosite_data<span class="sc">$</span>groupB[, <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">3</span>)],</span>
 <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>                                <span class="at">identifiers_groupA=</span><span class="fu">data.frame</span>(phosphosite_data<span class="sc">$</span>groupA[, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]),</span>
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>                                <span class="at">identifiers_groupB=</span><span class="fu">data.frame</span>(phosphosite_data<span class="sc">$</span>groupB[, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]))</span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:25] Layer &quot;phosphosite&quot;, group &quot;groupA&quot; contains 78 samples and 61 genes/proteins/entities.</span></span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:25] Layer &quot;phosphosite&quot;, group &quot;groupB&quot; contains 34 samples and 65 genes/proteins/entities.</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;phosphosite&quot;, group &quot;groupA&quot; contains 78 samples and 61 genes/proteins/entities.</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;phosphosite&quot;, group &quot;groupB&quot; contains 34 samples and 65 genes/proteins/entities.</span></span>
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>metabolite_layer <span class="ot">&lt;-</span> <span class="fu">make_layer</span>(<span class="at">name=</span><span class="st">&quot;metabolite&quot;</span>,</span>
 <span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>                               <span class="at">data_groupA=</span>metabolite_data<span class="sc">$</span>groupA[, <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">3</span>)],</span>
 <span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>                               <span class="at">data_groupB=</span>metabolite_data<span class="sc">$</span>groupB[, <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">3</span>)],</span>
 <span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>                               <span class="at">identifiers_groupA=</span><span class="fu">data.frame</span>(metabolite_data<span class="sc">$</span>groupA[, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]),</span>
 <span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>                               <span class="at">identifiers_groupB=</span><span class="fu">data.frame</span>(metabolite_data<span class="sc">$</span>groupB[, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]))</span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:25] Layer &quot;metabolite&quot;, group &quot;groupA&quot; contains 33 samples and 50 genes/proteins/entities.</span></span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:25] Layer &quot;metabolite&quot;, group &quot;groupB&quot; contains 34 samples and 49 genes/proteins/entities.</span></span></code></pre></div>
-<p>Below we are creating a list of all individual layers for pipeline
-input:</p>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;metabolite&quot;, group &quot;groupA&quot; contains 33 samples and 50 genes/proteins/entities.</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;metabolite&quot;, group &quot;groupB&quot; contains 34 samples and 49 genes/proteins/entities.</span></span></code></pre></div>
+<p>Run the code below to create a list of all individual layers for the
+pipeline input:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>all_layers <span class="ot">&lt;-</span> <span class="fu">list</span>(mrna_layer, protein_layer, phosphosite_layer, metabolite_layer)</span></code></pre></div>
 </div>
 <div id="create-inter-layer-connections-data-structure" class="section level4">
 <h4>Create inter-layer connections data structure</h4>
-<p>The inter-layer connections need to supplied by the user with
+<p>The inter-layer connections can be supplied by the user with
 <code>make_connection()</code>. The parameters <code>from</code> and
-<code>to</code> have to match to a name in the previously created layers
-by <code>make_layer()</code>. The established connection will result in
-an undirected combined graph. The parameter <code>group</code> indicates
-whether the connection should be applied to <code>both</code> groups
-(default) or only group <code>A</code> or <code>B</code>. There are two
-options to connect layers: (i) based on identical identifiers of
+<code>to</code> have to match to a name given in the previously created
+layers by <code>make_layer()</code>. The established connection will
+result in an undirected combined graph. The parameter <code>group</code>
+indicates whether the connection will be applied to <code>both</code>
+groups (default) or only group <code>A</code> or <code>B</code>. There
+are two options to connect layers: (i) based on identical identifiers of
 entities, or (ii) based on a given interaction table.</p>
-<p>For (i), two layers have to have one matching column name in their
+<p>For (i), two layers should contain one matching column name in their
 <code>identifiers_groupA</code>/<code>identifiers_groupB</code> data
 frames that is passed as the parameter <code>connect_on</code>. Two
 entities in the different layers with the same ID therein are connected
@@ -615,8 +621,8 @@ parameter, default 1).</p>
 Two columns should contain entity IDs that are also given in the
 respective identifiers
 <code>identifiers_groupA</code>/<code>identifiers_groupB</code> of the
-two layers to be connected. One column of those should be named the same
-as a column name given in the
+two layers to be connected. One column of those should have the same
+name as a column name given in the
 <code>identifiers_groupA</code>/<code>identifiers_groupB</code> data
 frames of one layer and the second column the same for the second layer.
 The third column should contain the weights with which the respective
@@ -628,24 +634,22 @@ protein layer, and “combined_score” containing the weights for the
 respective interactions:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data inspection</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>metabolite_protein_interactions[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, ]</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 x 3</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   pubchem_id gene_name combined_score</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt;</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1          1 CHAT               0.946</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2          1 CRAT               0.993</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3          1 CS                 0.911</span></span></code></pre></div>
-<p>The interaction table should be passed to the <code>connect_on</code>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   pubchem_id gene_name combined_score</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1          1      CHAT          0.946</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2          1      CRAT          0.993</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3          1        CS          0.911</span></span></code></pre></div>
+<p>The interaction table is passed to the <code>connect_on</code>
 parameter of <code>make_connection()</code> and the column name of the
-column containing the weights to the <code>weight</code> parameter.</p>
-<p>For example:</p>
+column containing the weights to the <code>weight</code> parameter. For
+example:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># (ii) make inter-layer connection </span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">make_connection</span>(<span class="at">from=</span><span class="st">&#39;protein&#39;</span>, <span class="at">to=</span><span class="st">&#39;metabolite&#39;</span>, </span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">connect_on=</span>metabolite_protein_interactions, </span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">weight=</span><span class="st">&#39;combined_score&#39;</span>, <span class="at">group=</span><span class="st">&quot;both&quot;</span>)</span></code></pre></div>
-<p>If you have only one layer you can skip this step and set the
+<p>If you have only one layer you can skip the next step and set the
 parameter <code>inter_layer_connections=NULL</code> later on.</p>
-<p>Below we are creating a list of all inter-layer connections for
-pipeline input:</p>
+<p>Run the code below to create a list of all inter-layer connections
+for pipeline input:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>all_inter_layer_connections <span class="ot">=</span> <span class="fu">list</span>(</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">make_connection</span>(<span class="at">from=</span><span class="st">&#39;mrna&#39;</span>, <span class="at">to=</span><span class="st">&#39;protein&#39;</span>, <span class="at">connect_on=</span><span class="st">&#39;gene_name&#39;</span>, <span class="at">weight=</span><span class="dv">1</span>, <span class="at">group=</span><span class="st">&quot;both&quot;</span>),</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">make_connection</span>(<span class="at">from=</span><span class="st">&#39;protein&#39;</span>, <span class="at">to=</span><span class="st">&#39;phosphosite&#39;</span>, <span class="at">connect_on=</span><span class="st">&#39;gene_name&#39;</span>, <span class="at">weight=</span><span class="dv">1</span>, <span class="at">group=</span><span class="st">&quot;both&quot;</span>),</span>
@@ -656,27 +660,27 @@ pipeline input:</p>
 <div id="create-drug-target-interaction-data-structure" class="section level4">
 <h4>Create drug-target interaction data structure</h4>
 <p>To run the entire pipeline, drug-target interactions are required.
-For that we need an interaction table mapping drugs to their targets,
+For that you need an interaction table mapping drugs to their targets,
 e.g, proteins. The table should contain two columns: one column
 containing the drug ids with the name <code>drug_name</code> and another
 column containing the drug targets with a name matching a column name in
 the <code>identifiers_groupA</code>/<code>identifiers_groupB</code> data
-frames of the target layer. In our example we are using a table from The
+frames of the target layer. The example data contains a table from The
 Drug Gene Interaction Database providing interactions of drugs with
 genes. The exemplary data frame has three columns (gene_name, drug_name,
 drug_chembl_id), one containing the gene names also given for the target
 protein layer, the second containing the drug names which are used to
 identify the drugs and a third column containing the ChEMBL IDs of drugs
-which will be ignored in the pipeline.</p>
-<p>For example:</p>
+which will be ignored in the pipeline. The data frame of the drug-target
+interactions should have an column named <code>drug_name</code>
+containing drug identifiers.</p>
+<p>Example:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data inspection</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>drug_gene_interactions[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, ]</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 x 3</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   gene_name drug_name   drug_chembl_id</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;         </span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 CDK7      BMS-387032  CHEMBL296468  </span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 ADORA2A   CHEMBL72862 CHEMBL72862   </span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 APOE      PREDNISONE  CHEMBL635</span></span></code></pre></div>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   gene_name   drug_name drug_chembl_id</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1      CDK7  BMS-387032   CHEMBL296468</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   ADORA2A CHEMBL72862    CHEMBL72862</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3      APOE  PREDNISONE      CHEMBL635</span></span></code></pre></div>
 <p>The function <code>make_drug_target()</code> generates the required
 format of the drug-target interactions for the pipeline. The parameter
 <code>target_molecules</code> should match one of the layer names, e.g.,
@@ -685,6 +689,8 @@ format of the drug-target interactions for the pipeline. The parameter
 described above. The column in the interaction table containing the
 targets should be given with the <code>match_on</code> parameter, e.g,
 <code>match_on=gene_name</code> for <code>protein</code> as targets.</p>
+<p>Run the code below to create a list containing the drug-target input
+for the pipeline:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>all_drug_target_interactions <span class="ot">&lt;-</span> <span class="fu">make_drug_target</span>(</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">target_molecules=</span><span class="st">&#39;protein&#39;</span>,</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">interaction_table=</span>drug_gene_interactions,</span>
@@ -701,21 +707,21 @@ user to compare with the intended input.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">return_errors</span>(<span class="fu">check_input</span>(<span class="at">layers=</span>all_layers, </span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">inter_layer_connections=</span>all_inter_layer_connections, </span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">drug_target_interactions=</span>all_drug_target_interactions))</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:26] Layer &quot;mrna&quot;, group &quot;groupA&quot; contains 78 samples and 50 genes/proteins/entities.</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:26] Layer &quot;mrna&quot;, group &quot;groupB&quot; contains 34 samples and 50 genes/proteins/entities.</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:26] Layer &quot;protein&quot;, group &quot;groupA&quot; contains 78 samples and 53 genes/proteins/entities.</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:26] Layer &quot;protein&quot;, group &quot;groupB&quot; contains 34 samples and 53 genes/proteins/entities.</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:26] Layer &quot;phosphosite&quot;, group &quot;groupA&quot; contains 78 samples and 61 genes/proteins/entities.</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:26] Layer &quot;phosphosite&quot;, group &quot;groupB&quot; contains 34 samples and 65 genes/proteins/entities.</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:26] Layer &quot;metabolite&quot;, group &quot;groupA&quot; contains 33 samples and 50 genes/proteins/entities.</span></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-07-08 10:21:26] Layer &quot;metabolite&quot;, group &quot;groupB&quot; contains 34 samples and 49 genes/proteins/entities.</span></span></code></pre></div>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;mrna&quot;, group &quot;groupA&quot; contains 78 samples and 50 genes/proteins/entities.</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;mrna&quot;, group &quot;groupB&quot; contains 34 samples and 50 genes/proteins/entities.</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;protein&quot;, group &quot;groupA&quot; contains 78 samples and 53 genes/proteins/entities.</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;protein&quot;, group &quot;groupB&quot; contains 34 samples and 53 genes/proteins/entities.</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;phosphosite&quot;, group &quot;groupA&quot; contains 78 samples and 61 genes/proteins/entities.</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;phosphosite&quot;, group &quot;groupB&quot; contains 34 samples and 65 genes/proteins/entities.</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;metabolite&quot;, group &quot;groupA&quot; contains 33 samples and 50 genes/proteins/entities.</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22-09-23 14:19:34] Layer &quot;metabolite&quot;, group &quot;groupB&quot; contains 34 samples and 49 genes/proteins/entities.</span></span></code></pre></div>
 </div>
 </div>
 </div>
-<div id="running-the-complete-pipeline" class="section level2">
-<h2>Running the complete pipeline</h2>
+<div id="run-the-complete-pipeline" class="section level2">
+<h2>Run the complete pipeline</h2>
 <p>The pipeline can be run entirely or in individual steps. To set
-global pipeline options a settings list needs to be created using the
+global pipeline options you can create a settings list using the
 <code>drdimont_settings()</code> function. This function contains
 default parameters that can be modified as shown below. For a detailed
 explanation of all possible settings and parameters please refer to the
@@ -727,7 +733,7 @@ and the required packages via pip then you should set the
 you have installed python and the required packages via conda then set
 the <code>drdimont_settings()</code> parameters <code>conda=TRUE</code>.
 <code>drdimont_settings()</code> will automatically check if Python can
-be found and shows a warning if not.</p>
+be found and prints a warning if not.</p>
 <p>The intermediate pipeline and drug response scores output (parameter
 <code>save_data</code>) is deactivated (default) but especially for
 large data files consider turning it on. You can specify the output
@@ -744,7 +750,7 @@ a tsv-file in the specified output directory if
 <p>See <em>Running the individual pipeline steps</em> and call
 <code>?drdimont_settings()</code> for further explanations of settings
 parameters.</p>
-<p>The settings list for the example:</p>
+<p>Run the following code to create a settings list for the example:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>example_settings <span class="ot">&lt;-</span> <span class="fu">drdimont_settings</span>(</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">handling_missing_data =</span> <span class="fu">list</span>(</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">default =</span> <span class="st">&quot;pairwise.complete.obs&quot;</span>,</span>
@@ -766,8 +772,8 @@ parameters.</p>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">drug_target_interactions=</span>all_drug_target_interactions, </span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">settings=</span>example_settings)</span></code></pre></div>
 </div>
-<div id="running-the-individual-pipeline-steps" class="section level2">
-<h2>Running the individual pipeline steps</h2>
+<div id="run-the-individual-pipeline-steps" class="section level2">
+<h2>Run the individual pipeline steps</h2>
 <p>The pipeline can also be used in a modular fashion. The modules then
 refer to the different steps:</p>
 <ol>
@@ -781,7 +787,7 @@ Generate individual graphs
 Combine graphs
 </li>
 <li>
-Identifying drug targets and their edges
+Identify drug targets and their edges
 </li>
 <li>
 Calculate integrated interaction score
@@ -796,14 +802,15 @@ Calculate differential drug response score
 <div id="step-1-compute-correlation-matrices" class="section level3">
 <h3>Step 1: Compute correlation matrices</h3>
 <p>In step one, correlation matrices are computed for the specified
-layers described above. The parameter <code>correlation_method</code> in
-<code>drdimont_settings()</code> can be set to use “spearman” (default),
+layers created above. The parameter <code>correlation_method</code> in
+<code>drdimont_settings()</code> can be set to “spearman” (default),
 “pearson”, or “kendall” as the correlation methods. The list of layers
 and the settings list are passed to
-<code>compute_correlation_matrices()</code>. To reduce runtime this
-example will only analyze the first 10 genes and patients of the mRNA
-layer (to compute all layers set <code>layers=all_layers</code> in
-<code>compute_correlation_matrices()</code> ):</p>
+<code>compute_correlation_matrices()</code>.</p>
+<p>To reduce runtime the following example will only analyze the first
+10 genes and patients of the mRNA layer (to compute all layers set
+<code>layers=all_layers</code> in
+<code>compute_correlation_matrices()</code>):</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>reduced_mrna_layer <span class="ot">&lt;-</span> <span class="fu">make_layer</span>(<span class="at">name=</span><span class="st">&quot;mrna&quot;</span>,</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">data_groupA=</span><span class="fu">t</span>(mrna_data<span class="sc">$</span>groupA[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,<span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>]),</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">data_groupB=</span><span class="fu">t</span>(mrna_data<span class="sc">$</span>groupB[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,<span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>]),</span>
@@ -827,7 +834,7 @@ third level consist of named data frames, for each layer one data frame,
 which contain the pipeline-internal mapping of the
 <code>identifiers_groupA</code>/<code>identifiers_groupB</code> data
 frames of the individual layers to layer specific node IDs.</p>
-<p>For example:</p>
+<p>Example:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data inspection</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;correlation_matrices_example&quot;</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>correlation_matrices_example<span class="sc">$</span>annotations<span class="sc">$</span>groupA<span class="sc">$</span>protein[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, ]</span>
@@ -852,6 +859,7 @@ networks can also be reduced to at most a given number of mean edges or
 a given density with the parameters <code>mean_number_edges</code> and
 <code>edge_density</code> respectively (default of both:
 <code>NULL</code>).</p>
+<p>Run the following code to generate the individual graphs:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;correlation_matrices_example&quot;</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>example_individual_graphs <span class="ot">&lt;-</span> <span class="fu">generate_individual_graphs</span>(</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">correlation_matrices=</span>correlation_matrices_example, </span>
@@ -873,6 +881,7 @@ level. The <code>annotations</code> element is a copy from the
 graph per group based on the inter-layer connections created above. The
 function creates the disjoint union of the individual graphs and adds
 inter-layer edges with the specified weight.</p>
+<p>Run the following code to combine the individual layers:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>example_combined_graphs <span class="ot">&lt;-</span> <span class="fu">generate_combined_graphs</span>(</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">graphs=</span>example_individual_graphs[[<span class="st">&quot;graphs&quot;</span>]], </span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">annotations=</span>example_individual_graphs[[<span class="st">&quot;annotations&quot;</span>]], </span>
@@ -886,7 +895,7 @@ objects. The <code>annotations</code> element consists of a data frame
 on the second level named <code>both</code> which contains the mapping
 of the identifier data frames of the individual layers to the layer
 specific node IDs for all layers together.</p>
-<p>For example:</p>
+<p>Example:</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data inspection</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>example_combined_graphs<span class="sc">$</span>annotations<span class="sc">$</span>both[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, ]</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   gene_name node_id layer ref_seq site_id biochemical_name metabolon_id</span></span>
@@ -898,14 +907,16 @@ specific node IDs for all layers together.</p>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         NA</span></span>
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         NA</span></span></code></pre></div>
 </div>
-<div id="step-4-identifying-drug-targets-and-their-edges" class="section level3">
-<h3>Step 4: Identifying drug targets and their edges</h3>
+<div id="step-4-identify-drug-targets-and-their-edges" class="section level3">
+<h3>Step 4: Identify drug targets and their edges</h3>
 <p>Next, in order to extract the list of relevant drugs the drug targets
 are identified in the combined graph for each group. Here, the node IDs
 of the specified drug targets are found in the combined graph and the
 drugs are mapped to their target nodes. Additionally, edge lists are
 returned containing the incident edges of drug target nodes for which
 integrated interaction scores are computed in the next step.</p>
+<p>Run the following code to extract the drug targets and their
+edges:</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>example_drug_target_edges <span class="ot">&lt;-</span> <span class="fu">determine_drug_targets</span>(</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">graphs=</span>example_combined_graphs[[<span class="st">&quot;graphs&quot;</span>]], </span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">annotations=</span>example_combined_graphs[[<span class="st">&quot;annotations&quot;</span>]], </span>
@@ -959,6 +970,8 @@ data.</p>
 DrDimont on a cluster, run <code>ray start --head --num-cpus 12</code>
 (change number of CPUs as fit) on the command line, before starting the
 R session.</p>
+<p>Run the following code to calculate the integrated interaction
+scores:</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>example_interaction_score_graphs <span class="ot">&lt;-</span> <span class="fu">generate_interaction_score_graphs</span>(</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">graphs=</span>example_combined_graphs[[<span class="st">&quot;graphs&quot;</span>]], </span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">drug_target_edgelists=</span>example_drug_target_edges[[<span class="st">&quot;edgelists&quot;</span>]], </span>
@@ -977,9 +990,9 @@ difference of the correlation-based edge weights and
 <code>differential_interaction_score</code> is the difference in
 integrated interaction scores. Missing edges in one of the two groups
 are set to zero before computing the difference. The differential
-integrated interaction score is set to be <code>NA</code> if the
-integrated interaction score was not computed in both groups, i.e., for
-all edges not incident to a drug target.</p>
+integrated interaction score is set to <code>NA</code> if the integrated
+interaction score was not computed in both groups, i.e., for all edges
+not incident to a drug target.</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;interaction_score_graphs_example&quot;</span>)</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>example_differential_graph <span class="ot">&lt;-</span> <span class="fu">generate_differential_score_graph</span>(</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">interaction_score_graphs=</span>interaction_score_graphs_example, </span>
@@ -1034,21 +1047,20 @@ of the particular drug.</p>
 <p>Full citation:</p>
 <p><i>Krug et al. (2020)</i>:</p>
 <ul>
-<li>Krug, Karsten et al. “Proteogenomic Landscape of Breast Cancer
-Tumorigenesis and Targeted Therapy.” Cell vol. 183,5 (2020):
-1436-1456.e31. <a href="https://www.doi.org/10.1016/j.cell.2020.10.036" class="uri">https://www.doi.org/10.1016/j.cell.2020.10.036</a></li>
+<li>Krug, K. et al. (2020) Proteogenomic Landscape of Breast Cancer
+Tumorigenesis and Targeted Therapy. <i>Cell</i>, 183:1436-1456.e31. <a href="https://www.doi.org/10.1016/j.cell.2020.10.036" class="uri">https://www.doi.org/10.1016/j.cell.2020.10.036</a></li>
 </ul>
-<p><i>Terunuma et al.(2014)</i>:</p>
+<p><i>Terunuma et al. (2014)</i>:</p>
 <ul>
-<li>Terunuma, Atsushi et al. “MYC-driven accumulation of
-2-hydroxyglutarate is associated with breast cancer prognosis.” The
-Journal of clinical investigation vol. 124,1 (2014): 398-412. <a href="https://www.doi.org/10.1172/JCI71180" class="uri">https://www.doi.org/10.1172/JCI71180</a></li>
+<li>Terunuma, A. et al. (2014) MYC-driven accumulation of
+2-hydroxyglutarate is associated with breast cancer prognosis. <i>J Clin
+Invest.</i>, 124:398-412. <a href="https://www.doi.org/10.1172/JCI71180" class="uri">https://www.doi.org/10.1172/JCI71180</a></li>
 </ul>
 <p><i>Hiort et al. (2022)</i>:</p>
 <ul>
-<li>Hiort, Pauline et al. “DrDimont: Explainable drug response
-prediction from differential analysis of multi-omics networks.” bioRxiv
-2022.05.31.493964 (2022). <a href="https://doi.org/10.1101/2022.05.31.493964" class="uri">https://doi.org/10.1101/2022.05.31.493964</a></li>
+<li>Hiort, P. et al. (2022) DrDimont: Explainable drug response
+prediction from differential analysis of multi-omics networks.
+<i>Bioinformatics</i>, 38:ii113–ii119. <a href="https://doi.org/10.1093/bioinformatics/btac477" class="uri">https://doi.org/10.1093/bioinformatics/btac477</a></li>
 </ul>
 <p>The package <code>DrDimont</code> is an updated version of the
 previously published <code>molnet</code> package (<a href="https://github.com/molnet-org/molnet" class="uri">https://github.com/molnet-org/molnet</a>; <a href="https://CRAN.R-project.org/package=molnet" class="uri">https://CRAN.R-project.org/package=molnet</a>)</p>
