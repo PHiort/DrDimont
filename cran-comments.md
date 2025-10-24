@@ -1,4 +1,28 @@
 # Current package version
+## Submission - version 0.1.5
+In this version we have:
+* fixed minor bugs
+* updated the vignette and function descriptions
+* updated graph generation to work with the new version of igraph (generate_individual_graphs() and subsidiary functions)
+* updated the example data to new igraph format
+* removed internal variables that are no longer needed
+* removed Rd files of all internal functions
+
+## Test environments
+* local macOS Sonoma 14.8.1, R release (4.5.1), aarch64-apple-darwin20
+    * OK
+* R winbuilder R-release (4.5.1), R-devel
+    * OK
+
+## R CMD check results
+0 errors | 0 warnings | 0 notes
+
+## Downstream dependencies
+There are currently no downstream dependencies for this package.
+
+
+# Old package versions
+
 ## Submission - version 0.1.4
 In this version we have:
 * updated the vignette and function descriptions.
@@ -17,8 +41,6 @@ In this version we have:
 
 ## Downstream dependencies
 There are currently no downstream dependencies for this package.
-
-# Old package versions
 
 ## Resubmission 3 - version 0.1.3
 This is a resubmission. In this version we have:
