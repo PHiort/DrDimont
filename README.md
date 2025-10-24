@@ -32,4 +32,4 @@ The supplied case study data uses data published by Krug et al. (2020) (https://
 At the moment all functions are exported to make debugging easier. However, many functions are not intended for user-interaction. These functions are marked with `[INTERNAL]` in the function documentation.
 
 
-The package `DrDimont` is an updated version of the previously published `molnet` package (https://github.com/molnet-org/molnet; https://cran.r-project.org/web/packages/molnet/index.html)
+The package `DrDimont` is an updated version of the previously published `molnet` package (https://github.com/molnet-org/molnet)
