@@ -1,4 +1,9 @@
 # Current package version
+## Submission - version 0.1.6
+In this version we have:
+* removed DrDimont from the package title in DESCRIPTION
+* updated the maintainer email address, the old one is still valid but less frequently checked
+
 ## Submission - version 0.1.5
 In this version we have:
 * fixed minor bugs
